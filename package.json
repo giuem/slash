@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint src/**/* --ext .ts,.tsx",
-    "postinstall": "cp ./node_modules/monaco-editor/min/vs/ ./public"
+    "postinstall": "cp -r ./node_modules/monaco-editor/min/vs/ ./public"
   },
   "dependencies": {
     "@monaco-editor/react": "^3.2.1",
