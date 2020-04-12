@@ -2,6 +2,8 @@ import { AppProps } from "next/app";
 import { monaco } from "@monaco-editor/react";
 
 import "modern-normalize/modern-normalize.css";
+import "../style/global.css";
+import { StoreProvider } from "../store/root";
 
 monaco.config({
   paths: {
@@ -10,5 +12,9 @@ monaco.config({
 });
 
 export default function SlashApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <StoreProvider>
+      <Component {...pageProps} />
+    </StoreProvider>
+  );
 }

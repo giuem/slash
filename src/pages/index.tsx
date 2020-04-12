@@ -1,25 +1,45 @@
 import Editor from "@monaco-editor/react";
 import Layout from "../components/Layout";
+import Sidebar from "../components/Sidebar";
 import VFileSystem from "../lib/fs";
 import { useEffect, useState } from "react";
+import { editor } from "monaco-editor";
+import { useFS } from "../store/root";
+
+// https://github.com/suren-atoyan/monaco-react
+
+const options: editor.IEditorOptions = {
+  minimap: { enabled: false }
+};
 
 const App = () => {
-  const [fs] = useState(new VFileSystem());
+  // const [fs] = useState(new VFileSystem());
+  // const fs = useFS();
 
-  useEffect(() => {
-    window["fs"] = fs;
-    return () => {
-      delete window["fs"];
-    };
-  }, [fs]);
-
-  fs.mkdirp("/a/b/c");
-  fs.writeFile("/1.js", "");
-  fs.writeFile("/a/2.js", "");
-  fs.writeFile("/a/d/2.js", "");
   return (
     <Layout>
-      <Editor height="100vh" language="javascript" />
+      <main>
+        <Sidebar width={300} />
+        <section>
+          <Editor
+            height="100%"
+            language="javascript"
+            theme="dark"
+            options={options}
+          />
+        </section>
+      </main>
+      <style jsx>{`
+        main {
+          display: flex;
+          height: 100vh;
+        }
+
+        section {
+          overflow: hidden;
+          flex: 1;
+        }
+      `}</style>
     </Layout>
   );
 };
