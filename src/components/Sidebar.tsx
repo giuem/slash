@@ -4,7 +4,10 @@ import { useFS } from "../store/root";
 import { observer } from "mobx-react";
 import _ from "lodash";
 
-const TreeItem: React.FC<{ file: VFile }> = observer(({ file }) => {
+const TreeItem: React.FC<{ file: VFile }> = observer(function TreeItem({
+  file
+}) {
+  console.log("treeitem", file.path);
   return (
     <li>
       <span>{file.basename}</span>
@@ -15,14 +18,14 @@ const TreeItem: React.FC<{ file: VFile }> = observer(({ file }) => {
 
 const Tree: React.FC<{
   path: string;
-}> = observer(({ path }) => {
-  // console.log(files);
+}> = observer(function Tree({ path }) {
   const fs = useFS();
   const files = _.orderBy(
     fs.readdir(path),
     ["isDir", "basename"],
     ["desc", "asc"]
   );
+  console.log("tree", path);
 
   if (files.length === 0) return null;
 

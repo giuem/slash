@@ -6,7 +6,7 @@ let uid = Date.now();
 export default class VFile {
   public readonly id = uid++;
   @observable
-  private _path: string;
+  public path: string;
 
   @observable
   public content: string | null;
@@ -15,17 +15,8 @@ export default class VFile {
     if (path[0] !== "/") {
       throw new TypeError("path must be absolute");
     }
-    this._path = path;
+    this.path = path;
     this.content = content ?? null;
-  }
-
-  @computed
-  get path() {
-    return this._path;
-  }
-
-  set path(p: string) {
-    this._path = p;
   }
 
   @computed
@@ -34,7 +25,7 @@ export default class VFile {
   }
 
   set dirname(p: string) {
-    this._path = p + "/" + this.basename;
+    this.path = p + "/" + this.basename;
   }
 
   @computed
@@ -43,7 +34,7 @@ export default class VFile {
   }
 
   set basename(n: string) {
-    this._path = this.dirname + "/" + n;
+    this.path = this.dirname + "/" + n;
   }
 
   @computed

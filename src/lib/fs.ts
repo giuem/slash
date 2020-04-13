@@ -52,11 +52,16 @@ export default class VFileSystem {
 
   @action
   public rename(path: string, newPath: string) {
+    // fixme
     this.fm.forEach(f => {
       if (f.dirname.indexOf(path) === 0) {
+        this.fm.delete(f.path);
         f.dirname = f.dirname.replace(path, newPath);
+        this.fm.set(f.path, f);
       } else if (f.path === path) {
+        this.fm.delete(f.path);
         f.path = newPath;
+        this.fm.set(f.path, f);
       }
     });
   }
