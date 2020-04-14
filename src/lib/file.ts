@@ -1,5 +1,5 @@
 import path from "path";
-import { observable, computed, action } from "mobx";
+import { observable, computed } from "mobx";
 
 let uid = Date.now();
 

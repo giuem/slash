@@ -3,22 +3,50 @@ import VFile from "../lib/file";
 import { useFS } from "../store/root";
 import { observer } from "mobx-react";
 import _ from "lodash";
+import { FolderFilled, FileFilled, FolderOpenFilled } from "@ant-design/icons";
 
-const TreeItem: React.FC<{ file: VFile }> = observer(function TreeItem({
-  file
-}) {
-  // console.log("treeitem", file.path);
-  return (
-    <li>
-      <span>{file.basename}</span>
-      {file.isDir && <Tree path={file.path} />}
-    </li>
-  );
-});
+import styles from "./Sidebar.module.scss";
+import { useState, useCallback, MouseEvent } from "react";
+
+const TreeItem: React.FC<{ file: VFile; level: number }> = observer(
+  function TreeItem({ file, level }) {
+    const [isOpen, setOpen] = useState(false);
+
+    const toggleOpen = useCallback((e: MouseEvent) => {
+      e.stopPropagation();
+      setOpen(open => !open);
+    }, []);
+
+    return (
+      <>
+        <div
+          className={styles.Item}
+          style={{ paddingLeft: `${level}rem` }}
+          onClick={toggleOpen}
+        >
+          <span className={styles.ItemIcon}>
+            {file.isDir ? (
+              isOpen ? (
+                <FolderOpenFilled style={{ color: "#559cf3" }} />
+              ) : (
+                <FolderFilled style={{ color: "#559cf3" }} />
+              )
+            ) : (
+              <FileFilled style={{ color: "#eee" }} />
+            )}
+          </span>
+          <span>{file.basename}</span>
+        </div>
+        {file.isDir && isOpen && <Tree path={file.path} level={level + 1} />}
+      </>
+    );
+  }
+);
 
 const Tree: React.FC<{
   path: string;
-}> = observer(function Tree({ path }) {
+  level?: number;
+}> = observer(function Tree({ path, level = 1 }) {
   const fs = useFS();
   const files = _.orderBy(
     fs.readdir(path),
@@ -30,11 +58,11 @@ const Tree: React.FC<{
   if (files.length === 0) return null;
 
   return (
-    <ul>
+    <div className={styles.Tree}>
       {files.map(file => (
-        <TreeItem key={file.id} file={file} />
+        <TreeItem key={file.id} file={file} level={level} />
       ))}
-    </ul>
+    </div>
   );
 });
 
@@ -45,7 +73,10 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ width }) => {
   return (
     <aside style={{ width }}>
-      <Tree path="/" />
+      <section className={styles.Files}>
+        <header>Files</header>
+        <Tree path="/" />
+      </section>
     </aside>
   );
 };

@@ -19,7 +19,7 @@ const App = () => {
   return (
     <Layout>
       <main>
-        <Sidebar width={300} />
+        <Sidebar width={240} />
         <section>
           <Editor
             height="100%"

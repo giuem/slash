@@ -1,10 +1,12 @@
 import { useContext, createContext, useEffect } from "react";
 import { useLocalStore } from "mobx-react"; // 6.x
 import VFileSystem from "../lib/fs";
+import TabStore from "./tabs";
 
 function createStore() {
   return {
-    fs: new VFileSystem()
+    fs: new VFileSystem(),
+    tabStore: new TabStore()
   };
 }
 
