@@ -7,7 +7,7 @@ import _ from "lodash";
 const TreeItem: React.FC<{ file: VFile }> = observer(function TreeItem({
   file
 }) {
-  console.log("treeitem", file.path);
+  // console.log("treeitem", file.path);
   return (
     <li>
       <span>{file.basename}</span>
@@ -25,7 +25,7 @@ const Tree: React.FC<{
     ["isDir", "basename"],
     ["desc", "asc"]
   );
-  console.log("tree", path);
+  // console.log("tree", path);
 
   if (files.length === 0) return null;
 
