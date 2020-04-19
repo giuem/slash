@@ -1,11 +1,18 @@
 import { AppProps } from "next/app";
+import dynamic from "next/dynamic";
+
 import { monaco } from "@monaco-editor/react";
 import "mobx-react-lite/batchingForReactDom";
 import "modern-normalize/modern-normalize.css";
 import "../style/global.css";
 import "antd/dist/antd.dark.css";
 
-import { StoreProvider } from "../store/root";
+const StoreProviderNoSSR = dynamic(
+  () => import("../store/root").then(c => c.StoreProvider),
+  {
+    ssr: false
+  }
+);
 
 monaco.config({
   paths: {
@@ -15,8 +22,8 @@ monaco.config({
 
 export default function SlashApp({ Component, pageProps }: AppProps) {
   return (
-    <StoreProvider>
+    <StoreProviderNoSSR>
       <Component {...pageProps} />
-    </StoreProvider>
+    </StoreProviderNoSSR>
   );
 }

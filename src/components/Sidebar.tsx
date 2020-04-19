@@ -194,9 +194,6 @@ const Tree: React.FC<{
     ["isDir", "basename"],
     ["desc", "asc"]
   );
-  // console.log("tree", path);
-
-  if (files.length === 0) return null;
 
   return (
     <div className={styles.Tree}>
@@ -237,8 +234,8 @@ const Sidebar: React.FC<SidebarProps> = ({ width }) => {
         <header>
           <span>Files</span>
           <span style={{ marginLeft: "auto" }}>
-            <FolderAddFilled onClick={addFile} />
-            <FileAddFilled style={{ marginLeft: 6 }} onClick={addDir} />
+            <FileAddFilled onClick={addFile} />
+            <FolderAddFilled style={{ marginLeft: 6 }} onClick={addDir} />
           </span>
         </header>
         <Tree path="/" addType={type} addDone={addDone} />

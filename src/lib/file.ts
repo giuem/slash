@@ -1,20 +1,31 @@
 import path from "path";
 import { observable, computed } from "mobx";
 
-let uid = Date.now();
+const ID = () => {
+  return `${Math.random().toString(36)}_${Date.now().toString(36)}`;
+};
 
 export default class VFile {
-  public readonly id = uid++;
+  public readonly id = ID();
   @observable
   public path: string;
 
   @observable
   public content: string | null;
 
-  constructor({ path, content }: { path: string; content?: string }) {
+  constructor({
+    path,
+    content,
+    id
+  }: {
+    path: string;
+    content?: string;
+    id?: string;
+  }) {
     if (path[0] !== "/") {
       throw new TypeError("path must be absolute");
     }
+    if (id != null) this.id = id;
     this.path = path;
     this.content = content ?? null;
   }

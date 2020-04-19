@@ -1,11 +1,12 @@
-import { useContext, createContext, useEffect } from "react";
+import { useContext, createContext, useEffect, useLayoutEffect } from "react";
 import { useLocalStore } from "mobx-react"; // 6.x
 import VFileSystem from "../lib/fs";
 import TabStore from "./tabs";
+import { autorun } from "mobx";
 
 function createStore() {
   return {
-    fs: new VFileSystem(),
+    fs: VFileSystem.fromJSON(localStorage.getItem("fs")),
     tabStore: new TabStore()
   };
 }
@@ -21,15 +22,17 @@ export const StoreProvider = ({ children }) => {
   const { fs } = store;
 
   useEffect(() => {
+    const disposer = autorun(() => {
+      localStorage.setItem("fs", fs.toJSON());
+    });
     window["fs"] = fs;
-    fs.mkdirp("/a/b/c");
-    fs.writeFile("/1.js", "");
-    fs.writeFile("/a/2.js", "");
-    fs.writeFile("/a/d/2.js", "");
+
     return () => {
       delete window["fs"];
+      disposer();
     };
   }, [fs]);
+
   return (
     <storeContext.Provider value={store}>{children}</storeContext.Provider>
   );

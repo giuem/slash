@@ -92,4 +92,30 @@ export default class VFileSystem {
     });
     return files;
   }
+
+  toJSON() {
+    const obj = {};
+    this.fm.forEach((f, k) => {
+      obj[k] = f;
+    });
+    return JSON.stringify(obj);
+  }
+
+  static fromJSON(jsonStr: string) {
+    const fs = new VFileSystem();
+    try {
+      const o = JSON.parse(jsonStr);
+      if (Object.keys(o).length > 1) {
+        fs.fm.clear();
+        for (const k in o) {
+          const { path, content, id } = o[k];
+          fs.fm.set(k, new VFile({ path, content, id }));
+        }
+      }
+    } catch (error) {
+      // ignore
+    }
+
+    return fs;
+  }
 }
