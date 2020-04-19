@@ -1,7 +1,12 @@
-import VFile from "../lib/file";
-// import VFileSystem from "../lib/fs";
-import { useFS } from "../store/root";
+import {
+  useState,
+  useCallback,
+  MouseEvent,
+  FocusEvent,
+  KeyboardEvent
+} from "react";
 import { observer } from "mobx-react";
+import path from "path";
 import _ from "lodash";
 import {
   FolderFilled,
@@ -12,39 +17,44 @@ import {
   CloseOutlined,
   EditOutlined
 } from "@ant-design/icons";
+import { Input } from "antd";
+
+import VFile from "../lib/file";
+// import VFileSystem from "../lib/fs";
+import { useFS } from "../store/root";
 
 import styles from "./Sidebar.module.scss";
-import { useState, useCallback, MouseEvent } from "react";
-
-const ToolBox: React.FC<{ file: VFile }> = ({ file }) => {
-  const fs = useFS();
-  const handleDelete = useCallback(() => {
-    fs.delete(file.path);
-  }, [fs, file]);
-
-  return (
-    <span className={styles.ToolBox}>
-      {file.isDir && (
-        <>
-          <FolderAddOutlined />
-          <FileAddOutlined />
-        </>
-      )}
-
-      <EditOutlined />
-      <CloseOutlined onClick={handleDelete} />
-    </span>
-  );
-};
 
 const TreeItem: React.FC<{ file: VFile; level: number }> = observer(
   function TreeItem({ file, level }) {
+    const fs = useFS();
     const [isOpen, setOpen] = useState(false);
+    const [isEdited, setEdited] = useState(false);
 
     const toggleOpen = useCallback((e: MouseEvent) => {
       e.stopPropagation();
       setOpen(open => !open);
     }, []);
+
+    const handleEdit = useCallback((e: MouseEvent) => {
+      e.stopPropagation();
+      setEdited(true);
+    }, []);
+
+    const handleEditDone = useCallback(
+      (e: FocusEvent<HTMLInputElement> | KeyboardEvent<HTMLInputElement>) => {
+        const val = (e.target as HTMLInputElement).value.trim();
+        if (val) {
+          fs.rename(file.path, path.join(file.dirname, val));
+        }
+        setEdited(false);
+      },
+      [fs, file]
+    );
+
+    const handleDelete = useCallback(() => {
+      fs.delete(file.path);
+    }, [fs, file]);
 
     return (
       <>
@@ -64,8 +74,30 @@ const TreeItem: React.FC<{ file: VFile; level: number }> = observer(
               <FileFilled style={{ color: "#eee" }} />
             )}
           </span>
-          <span>{file.basename}</span>
-          <ToolBox file={file} />
+          {isEdited ? (
+            <Input
+              size="middle"
+              autoFocus
+              spellCheck={false}
+              defaultValue={file.basename}
+              onBlur={handleEditDone}
+              onPressEnter={handleEditDone}
+            />
+          ) : (
+            <>
+              <span>{file.basename}</span>
+              <span className={styles.ToolBox}>
+                {file.isDir && (
+                  <>
+                    <FolderAddOutlined />
+                    <FileAddOutlined />
+                  </>
+                )}
+                <EditOutlined onClick={handleEdit} />
+                <CloseOutlined onClick={handleDelete} />
+              </span>
+            </>
+          )}
         </div>
         {file.isDir && isOpen && <Tree path={file.path} level={level + 1} />}
       </>
