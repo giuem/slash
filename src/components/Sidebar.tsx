@@ -15,9 +15,11 @@ import {
   FolderAddOutlined,
   FileAddOutlined,
   CloseOutlined,
-  EditOutlined
+  EditOutlined,
+  FolderAddFilled,
+  FileAddFilled
 } from "@ant-design/icons";
-import { Input } from "antd";
+import { Input, message } from "antd";
 
 import VFile from "../lib/file";
 // import VFileSystem from "../lib/fs";
@@ -25,11 +27,63 @@ import { useFS } from "../store/root";
 
 import styles from "./Sidebar.module.scss";
 
+const useAddFile = (p: string) => {
+  const fs = useFS();
+  const [type, setType] = useState<null | "file" | "dir">(null);
+
+  const addFile = useCallback((e: MouseEvent) => {
+    e.stopPropagation();
+    setType("file");
+  }, []);
+
+  const addDir = useCallback((e: MouseEvent) => {
+    e.stopPropagation();
+    setType("dir");
+  }, []);
+
+  const addDone = useCallback(
+    (e: FocusEvent<HTMLInputElement> | KeyboardEvent<HTMLInputElement>) => {
+      const val = (e.target as HTMLInputElement).value.trim();
+      if (val) {
+        try {
+          if (val.indexOf("/") > 0 || val.indexOf("\\") > 0) {
+            throw new Error("The title cannot contain slash or backslash");
+          }
+          if (val === "." || val === "..") {
+            throw new Error("The title cannot be . or ..");
+          }
+          const filename = path.join(p, val);
+          if (fs.exists(filename)) {
+            throw new Error("The file exists!");
+          }
+          if (type === "dir") {
+            fs.mkdirp(filename);
+          } else {
+            fs.writeFile(filename, "");
+          }
+        } catch (e) {
+          message.error(e.message || "Fail to create");
+        }
+      }
+      setType(null);
+    },
+    [fs, p, type]
+  );
+
+  return {
+    type,
+    addFile,
+    addDir,
+    addDone
+  };
+};
+
 const TreeItem: React.FC<{ file: VFile; level: number }> = observer(
   function TreeItem({ file, level }) {
     const fs = useFS();
     const [isOpen, setOpen] = useState(false);
     const [isEdited, setEdited] = useState(false);
+    const { type, addFile, addDir, addDone } = useAddFile(file.path);
 
     const toggleOpen = useCallback((e: MouseEvent) => {
       e.stopPropagation();
@@ -56,6 +110,22 @@ const TreeItem: React.FC<{ file: VFile; level: number }> = observer(
       fs.delete(file.path);
     }, [fs, file]);
 
+    const handleAddFile = useCallback(
+      e => {
+        addFile(e);
+        setOpen(true);
+      },
+      [addFile]
+    );
+
+    const handleAddDir = useCallback(
+      e => {
+        addDir(e);
+        setOpen(true);
+      },
+      [addDir]
+    );
+
     return (
       <>
         <div
@@ -76,7 +146,7 @@ const TreeItem: React.FC<{ file: VFile; level: number }> = observer(
           </span>
           {isEdited ? (
             <Input
-              size="middle"
+              size="small"
               autoFocus
               spellCheck={false}
               defaultValue={file.basename}
@@ -89,8 +159,8 @@ const TreeItem: React.FC<{ file: VFile; level: number }> = observer(
               <span className={styles.ToolBox}>
                 {file.isDir && (
                   <>
-                    <FolderAddOutlined />
-                    <FileAddOutlined />
+                    <FileAddOutlined onClick={handleAddFile} />
+                    <FolderAddOutlined onClick={handleAddDir} />
                   </>
                 )}
                 <EditOutlined onClick={handleEdit} />
@@ -99,7 +169,14 @@ const TreeItem: React.FC<{ file: VFile; level: number }> = observer(
             </>
           )}
         </div>
-        {file.isDir && isOpen && <Tree path={file.path} level={level + 1} />}
+        {file.isDir && isOpen && (
+          <Tree
+            path={file.path}
+            level={level + 1}
+            addType={type}
+            addDone={addDone}
+          />
+        )}
       </>
     );
   }
@@ -108,7 +185,9 @@ const TreeItem: React.FC<{ file: VFile; level: number }> = observer(
 const Tree: React.FC<{
   path: string;
   level?: number;
-}> = observer(function Tree({ path, level = 1 }) {
+  addType: "dir" | "file";
+  addDone: (e: any) => void;
+}> = observer(function Tree({ path, level = 1, addType, addDone }) {
   const fs = useFS();
   const files = _.orderBy(
     fs.readdir(path),
@@ -124,6 +203,24 @@ const Tree: React.FC<{
       {files.map(file => (
         <TreeItem key={file.id} file={file} level={level} />
       ))}
+      {addType && (
+        <div className={styles.Item} style={{ paddingLeft: `${level}rem` }}>
+          <span className={styles.ItemIcon}>
+            {addType === "dir" ? (
+              <FolderFilled style={{ color: "#559cf3" }} />
+            ) : (
+              <FileFilled style={{ color: "#eee" }} />
+            )}
+          </span>
+          <Input
+            size="small"
+            autoFocus
+            spellCheck={false}
+            onBlur={addDone}
+            onPressEnter={addDone}
+          />
+        </div>
+      )}
     </div>
   );
 });
@@ -133,11 +230,18 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ width }) => {
+  const { type, addFile, addDir, addDone } = useAddFile("/");
   return (
     <aside style={{ width }}>
       <section className={styles.Files}>
-        <header>Files</header>
-        <Tree path="/" />
+        <header>
+          <span>Files</span>
+          <span style={{ marginLeft: "auto" }}>
+            <FolderAddFilled onClick={addFile} />
+            <FileAddFilled style={{ marginLeft: 6 }} onClick={addDir} />
+          </span>
+        </header>
+        <Tree path="/" addType={type} addDone={addDone} />
       </section>
     </aside>
   );

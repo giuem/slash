@@ -1,10 +1,11 @@
 .Files {
   header {
     padding: 8px 20px;
-    font-weight: bold;
+    display: flex;
+    border-bottom: 1px solid rgba($color: #fff, $alpha: 0.2);
   }
 
-  .Tree {}
+  // .Tree {}
 
   .Item {
     padding: 0 20px;
@@ -27,19 +28,19 @@
       }
     }
   }
+}
 
-  .ToolBox {
-    opacity: 0;
-    margin-left: auto;
-    transition: all 200ms ease;
-    > * {
-      margin-left: 3px;
-    }
-  }
+.ItemIcon {
+  display: inline-block;
+  width: 24px;
+  text-align: center;
+}
 
-  .ItemIcon {
-    display: inline-block;
-    width: 24px;
-    text-align: center;
+.ToolBox {
+  opacity: 0;
+  margin-left: auto;
+  transition: all 200ms ease;
+  > * {
+    margin-left: 3px;
   }
 }
