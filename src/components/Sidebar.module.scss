@@ -7,7 +7,7 @@
   .Tree {}
 
   .Item {
-    padding-left: 20px;
+    padding: 0 20px;
     color: rgba(255,255,255,0.66);
     line-height: 30px;
 
@@ -16,9 +16,24 @@
     cursor: pointer;
     transition: color 120ms ease;
 
+    display: flex;
+
     &:hover {
       color: rgba(255,255,255,1);
-      background-color: rgba($color: #fff, $alpha: 0.08);
+      background-color: rgba($color: #fff, $alpha: 0.1);
+
+      .ToolBox {
+        opacity: 1;
+      }
+    }
+  }
+
+  .ToolBox {
+    opacity: 0;
+    margin-left: auto;
+    transition: all 200ms ease;
+    > * {
+      margin-left: 3px;
     }
   }
 

@@ -66,6 +66,22 @@ export default class VFileSystem {
     });
   }
 
+  @action
+  public delete(path: string) {
+    const file = this.stats(path);
+    if (!file) return;
+
+    this.fm.delete(path);
+    if (file.isDir) {
+      this.fm.forEach(f => {
+        // safe delete
+        if (f && f.dirname === path) {
+          this.delete(f.path);
+        }
+      });
+    }
+  }
+
   public readdir(path: string) {
     const files: VFile[] = [];
     this.fm.forEach(f => {

@@ -3,10 +3,39 @@ import VFile from "../lib/file";
 import { useFS } from "../store/root";
 import { observer } from "mobx-react";
 import _ from "lodash";
-import { FolderFilled, FileFilled, FolderOpenFilled } from "@ant-design/icons";
+import {
+  FolderFilled,
+  FileFilled,
+  FolderOpenFilled,
+  FolderAddOutlined,
+  FileAddOutlined,
+  CloseOutlined,
+  EditOutlined
+} from "@ant-design/icons";
 
 import styles from "./Sidebar.module.scss";
 import { useState, useCallback, MouseEvent } from "react";
+
+const ToolBox: React.FC<{ file: VFile }> = ({ file }) => {
+  const fs = useFS();
+  const handleDelete = useCallback(() => {
+    fs.delete(file.path);
+  }, [fs, file]);
+
+  return (
+    <span className={styles.ToolBox}>
+      {file.isDir && (
+        <>
+          <FolderAddOutlined />
+          <FileAddOutlined />
+        </>
+      )}
+
+      <EditOutlined />
+      <CloseOutlined onClick={handleDelete} />
+    </span>
+  );
+};
 
 const TreeItem: React.FC<{ file: VFile; level: number }> = observer(
   function TreeItem({ file, level }) {
@@ -36,6 +65,7 @@ const TreeItem: React.FC<{ file: VFile; level: number }> = observer(
             )}
           </span>
           <span>{file.basename}</span>
+          <ToolBox file={file} />
         </div>
         {file.isDir && isOpen && <Tree path={file.path} level={level + 1} />}
       </>
