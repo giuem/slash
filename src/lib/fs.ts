@@ -60,7 +60,7 @@ export default class VFileSystem {
   @observable
   private fm: Map<string, VFile> = new Map();
 
-  constructor() {
+  private constructor() {
     this.fm.set("/", new VFile({ path: "/" }));
   }
 

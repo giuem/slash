@@ -18,19 +18,26 @@ const storeContext = createContext<TStore | null>(null);
 export const StoreProvider = ({ children }) => {
   const store = useLocalStore(createStore);
   const { fs } = store;
-  useEffect(() => {
-    window["Store"] = store;
-    return () => {
-      delete window["Store"];
-    };
-  }, [store]);
 
-  useEffect(() => {
-    const disposer = autorun(() => {
-      localStorage.setItem("fs", fs.toJSON());
-    });
+  // debug only
+  if (process.env.NODE_ENV === "development") {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+      window["Store"] = store;
+      return () => {
+        delete window["Store"];
+      };
+    }, [store]);
+  }
 
-    return disposer;
+  // sync fs to localStorage
+  useEffect(() => {
+    return autorun(
+      () => {
+        localStorage.setItem("fs", fs.toJSON());
+      },
+      { delay: 300 }
+    );
   }, [fs]);
 
   return (
