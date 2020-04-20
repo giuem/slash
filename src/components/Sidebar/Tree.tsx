@@ -1,11 +1,4 @@
-import {
-  useState,
-  useCallback,
-  FocusEvent,
-  KeyboardEvent,
-  MouseEvent
-} from "react";
-import path from "path";
+import { useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import {
   FolderFilled,
@@ -22,36 +15,19 @@ import { Input } from "antd";
 import { useFS } from "../../store";
 import { VFile } from "../../lib/fs";
 
-import { useAddFile } from "./hooks";
+import { useAddFileInPath, useEditFilename } from "./hooks";
 import styles from "./Sidebar.module.scss";
 
 const FileTreeItem: React.FC<{ file: VFile; level: number }> = observer(
   function TreeItem({ file, level }) {
     const fs = useFS();
     const [isOpen, setOpen] = useState(false);
-    const [isEdited, setEdited] = useState(false);
-    const { type, addFile, addDir, addDone } = useAddFile(file.path);
+    const { isEdited, handleEdit, handleEditDone } = useEditFilename(file);
+    const { type, addFile, addDir, addDone } = useAddFileInPath(file.path);
 
-    const toggleOpen = useCallback((e: MouseEvent) => {
-      e.stopPropagation();
+    const toggleOpen = useCallback(() => {
       setOpen(open => !open);
     }, []);
-
-    const handleEdit = useCallback((e: MouseEvent) => {
-      e.stopPropagation();
-      setEdited(true);
-    }, []);
-
-    const handleEditDone = useCallback(
-      (e: FocusEvent<HTMLInputElement> | KeyboardEvent<HTMLInputElement>) => {
-        const val = (e.target as HTMLInputElement).value.trim();
-        if (val) {
-          fs.rename(file.path, path.join(file.dirname, val));
-        }
-        setEdited(false);
-      },
-      [fs, file]
-    );
 
     const handleDelete = useCallback(() => {
       fs.delete(file.path);
@@ -133,7 +109,7 @@ export const FileTree: React.FC<{
   path: string;
   level?: number;
   addType: "dir" | "file";
-  addDone: ReturnType<typeof useAddFile>["addDone"];
+  addDone: ReturnType<typeof useAddFileInPath>["addDone"];
 }> = observer(function Tree({ path, level = 1, addType, addDone }) {
   const fs = useFS();
   const files = _.orderBy(

@@ -1,7 +1,7 @@
 import { FolderAddFilled, FileAddFilled } from "@ant-design/icons";
 
 import styles from "./Sidebar.module.scss";
-import { useAddFile } from "./hooks";
+import { useAddFileInPath } from "./hooks";
 import { FileTree } from "./Tree";
 
 interface SidebarProps {
@@ -9,7 +9,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ width }) => {
-  const { type, addFile, addDir, addDone } = useAddFile("/");
+  const { type, addFile, addDir, addDone } = useAddFileInPath("/");
   return (
     <aside style={{ width }}>
       <section className={styles.Files}>
