@@ -17,13 +17,13 @@ import {
   EditOutlined
 } from "@ant-design/icons";
 import _ from "lodash";
+import { Input } from "antd";
 
-import VFile from "../../lib/file";
-import { useFS } from "../../store/root";
+import { useFS } from "../../store";
+import { VFile } from "../../lib/fs";
 
 import { useAddFile } from "./hooks";
 import styles from "./Sidebar.module.scss";
-import { Input } from "antd";
 
 const FileTreeItem: React.FC<{ file: VFile; level: number }> = observer(
   function TreeItem({ file, level }) {

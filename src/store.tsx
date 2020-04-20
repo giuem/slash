@@ -1,7 +1,7 @@
 import { useContext, createContext, useEffect, useLayoutEffect } from "react";
 import { useLocalStore } from "mobx-react"; // 6.x
-import VFileSystem from "../lib/fs";
-import TabStore from "./tabs";
+import VFileSystem from "./lib/fs";
+import TabStore from "./lib/tabs";
 import { autorun } from "mobx";
 
 function createStore() {
@@ -15,22 +15,22 @@ type TStore = ReturnType<typeof createStore>;
 
 const storeContext = createContext<TStore | null>(null);
 
-// storeContext.displayName = "StoreContext";
-
 export const StoreProvider = ({ children }) => {
   const store = useLocalStore(createStore);
   const { fs } = store;
+  useEffect(() => {
+    window["Store"] = store;
+    return () => {
+      delete window["Store"];
+    };
+  }, [store]);
 
   useEffect(() => {
     const disposer = autorun(() => {
       localStorage.setItem("fs", fs.toJSON());
     });
-    window["fs"] = fs;
 
-    return () => {
-      delete window["fs"];
-      disposer();
-    };
+    return disposer;
   }, [fs]);
 
   return (
@@ -50,4 +50,9 @@ export const useStore = () => {
 export const useFS = () => {
   const store = useStore();
   return store.fs;
+};
+
+export const useTabs = () => {
+  const store = useStore();
+  return store.tabStore;
 };

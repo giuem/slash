@@ -5,7 +5,7 @@ import {
   KeyboardEvent,
   MouseEvent
 } from "react";
-import { useFS } from "../../store/root";
+import { useFS } from "../../store";
 import path from "path";
 import { message } from "antd";
 

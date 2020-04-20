@@ -11,9 +11,6 @@ const options: editor.IEditorOptions = {
 };
 
 const App = () => {
-  // const [fs] = useState(new VFileSystem());
-  // const fs = useFS();
-
   return (
     <Layout>
       <main>

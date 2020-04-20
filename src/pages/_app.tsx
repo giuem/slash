@@ -8,7 +8,7 @@ import "../style/global.css";
 import "antd/dist/antd.dark.css";
 
 const StoreProviderNoSSR = dynamic(
-  () => import("../store/root").then(c => c.StoreProvider),
+  () => import("../store").then(c => c.StoreProvider),
   {
     ssr: false
   }

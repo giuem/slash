@@ -1,4 +1,4 @@
-import VFile from "../lib/file";
+import { VFile } from "./fs";
 
 interface Tab {
   file: VFile;
