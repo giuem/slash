@@ -1,10 +1,8 @@
 import Editor from "@monaco-editor/react";
 import Layout from "../components/Layout";
 import Sidebar from "../components/Sidebar";
-import VFileSystem from "../lib/fs";
-import { useEffect, useState } from "react";
+
 import { editor } from "monaco-editor";
-import { useFS } from "../store/root";
 
 // https://github.com/suren-atoyan/monaco-react
 
