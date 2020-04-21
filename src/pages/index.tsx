@@ -1,38 +1,18 @@
-import Editor from "@monaco-editor/react";
 import Layout from "../components/Layout";
 import Sidebar from "../components/Sidebar";
-
-import { editor } from "monaco-editor";
-
-// https://github.com/suren-atoyan/monaco-react
-
-const options: editor.IEditorOptions = {
-  minimap: { enabled: false }
-};
+import EditorView from "../components/EditorView";
 
 const App = () => {
   return (
     <Layout>
       <main>
         <Sidebar width={240} />
-        <section>
-          <Editor
-            height="100%"
-            language="javascript"
-            theme="dark"
-            options={options}
-          />
-        </section>
+        <EditorView />
       </main>
       <style jsx>{`
         main {
           display: flex;
           height: 100vh;
-        }
-
-        section {
-          overflow: hidden;
-          flex: 1;
         }
       `}</style>
     </Layout>

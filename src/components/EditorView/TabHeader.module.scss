@@ -1,0 +1,48 @@
+.Header {
+  display: flex;
+}
+
+.Tabs {
+  display: flex;
+}
+
+.Tab {
+  line-height: 38px;
+  display: flex;
+  padding: 0 12px;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover .TabCloseIcon {
+    opacity: 1;
+  }
+}
+
+.TabIsActive {
+  composes: Tab;
+  color: #fff;
+  border-bottom: 1px solid #0ff;
+  background-color: rgba($color: #fff, $alpha: 0.08);
+
+  .TabCloseIcon {
+    opacity: 1;
+  }
+}
+
+.TabIcon {
+  font-size: 12px;
+}
+
+.TabName {
+  margin: 0 8px;
+  font-size: 15px;
+}
+
+.TabCloseIcon {
+  composes: TabIcon;
+  opacity: 0;
+  // margin-left: 5px;
+  // padding: 5px;
+  // font-size: 12px;
+}
+

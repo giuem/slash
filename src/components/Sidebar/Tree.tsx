@@ -12,7 +12,7 @@ import {
 import _ from "lodash";
 import { Input } from "antd";
 
-import { useFS } from "../../store";
+import { useFS, useTabs } from "../../store";
 import { VFile } from "../../lib/fs";
 
 import { useAddFileInPath, useEditFilename } from "./hooks";
@@ -21,6 +21,7 @@ import styles from "./Sidebar.module.scss";
 const FileTreeItem: React.FC<{ file: VFile; level: number }> = observer(
   function TreeItem({ file, level }) {
     const fs = useFS();
+    const tabs = useTabs();
     const [isOpen, setOpen] = useState(false);
     const { isEdited, handleEdit, handleEditDone } = useEditFilename(file);
     const { type, addFile, addDir, addDone } = useAddFileInPath(file.path);
@@ -28,6 +29,10 @@ const FileTreeItem: React.FC<{ file: VFile; level: number }> = observer(
     const toggleOpen = useCallback(() => {
       setOpen(open => !open);
     }, []);
+
+    const handleOpenFile = useCallback(() => {
+      tabs.activateTab(file);
+    }, [file, tabs]);
 
     const handleDelete = useCallback(() => {
       fs.delete(file.path);
@@ -54,7 +59,7 @@ const FileTreeItem: React.FC<{ file: VFile; level: number }> = observer(
         <div
           className={styles.Item}
           style={{ paddingLeft: `${level}rem` }}
-          onClick={toggleOpen}
+          onClick={file.isDir ? toggleOpen : handleOpenFile}
         >
           <span className={styles.ItemIcon}>
             {file.isDir ? (
@@ -108,7 +113,7 @@ const FileTreeItem: React.FC<{ file: VFile; level: number }> = observer(
 export const FileTree: React.FC<{
   path: string;
   level?: number;
-  addType: "dir" | "file";
+  addType: "dir" | "file" | null;
   addDone: ReturnType<typeof useAddFileInPath>["addDone"];
 }> = observer(function Tree({ path, level = 1, addType, addDone }) {
   const fs = useFS();

@@ -1,4 +1,4 @@
-import { useContext, createContext, useEffect, useLayoutEffect } from "react";
+import { useContext, createContext, useEffect } from "react";
 import { useLocalStore } from "mobx-react"; // 6.x
 import VFileSystem from "./lib/fs";
 import TabStore from "./lib/tabs";
@@ -6,7 +6,7 @@ import { autorun } from "mobx";
 
 function createStore() {
   return {
-    fs: VFileSystem.fromJSON(localStorage.getItem("fs")),
+    fs: VFileSystem.fromJSON(localStorage.getItem("fs") || ""),
     tabStore: new TabStore()
   };
 }
