@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 import { CloseOutlined, FileFilled } from "@ant-design/icons";
 import styles from "./TabHeader.module.scss";
 import { useCallback, MouseEvent } from "react";
+import { TabItem } from "../../lib/tabs";
 
-const TabItem = observer(function TabItem({ tab }) {
+const Tab = observer(function Tab({ tab }: { tab: TabItem }) {
   const tabs = useTabs();
 
   const switchTab = useCallback(() => {
@@ -28,9 +29,13 @@ const TabItem = observer(function TabItem({ tab }) {
         <FileFilled />
       </span>
       <span className={styles.TabName}>{tab.file.basename}</span>
-      <span className={styles.TabCloseIcon} onClick={closeTab}>
-        <CloseOutlined />
-      </span>
+      {tab.isEdited ? (
+        <span className={styles.TabUnSaveIcon} onClick={closeTab}></span>
+      ) : (
+        <span className={styles.TabCloseIcon} onClick={closeTab}>
+          <CloseOutlined />
+        </span>
+      )}
     </div>
   );
 });
@@ -42,7 +47,7 @@ const TabHeader = observer(function TabHeader() {
     <header className={styles.Header}>
       <section className={styles.Tabs}>
         {tabs.tabs.map(tab => (
-          <TabItem key={tab.id} tab={tab} />
+          <Tab key={tab.id} tab={tab} />
         ))}
       </section>
     </header>

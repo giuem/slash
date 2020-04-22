@@ -4,7 +4,7 @@ import { observable, action } from "mobx";
 import { monaco } from "@monaco-editor/react";
 import _ from "lodash";
 
-interface Tab {
+export interface TabItem {
   id: string;
   file: VFile;
   model: editor.ITextModel;
@@ -14,23 +14,33 @@ interface Tab {
 
 class TabStore {
   @observable.shallow
-  public tabs: Array<Tab> = [];
+  public tabs: Array<TabItem> = [];
 
   @observable
-  public activeTab: Tab | null;
+  public activeTab: TabItem | null;
 
   @action
   public async activateTab(file: VFile) {
     let tab = this.tabs.find(t => t.file === file);
     if (!tab) {
-      const editor = await monaco.init().then(m => m.editor);
+      const m = await monaco.init().then(m => m);
+      // console.log(editor);
       tab = observable({
         id: _.uniqueId(),
         file,
-        model: editor.createModel(file.content as string),
+        model: m.editor.createModel(
+          file.content as string,
+          "",
+          m.Uri.from({ path: file.path, scheme: "file" })
+        ),
         isEdited: false,
         isPined: false
       });
+
+      tab.model.onDidChangeContent(e => {
+        tab!.isEdited = true;
+      });
+
       this.tabs.push(tab);
     }
 
@@ -40,7 +50,8 @@ class TabStore {
   }
 
   @action
-  public removeTab(tab: Tab) {
+  public removeTab(tab: TabItem) {
+    tab.model.dispose();
     const idx = this.tabs.findIndex(t => t === tab);
     this.tabs = this.tabs.filter(t => t !== tab);
 

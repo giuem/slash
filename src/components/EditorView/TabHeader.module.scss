@@ -12,6 +12,7 @@
   padding: 0 12px;
   cursor: pointer;
   user-select: none;
+  align-items: center;
 
   &:hover .TabCloseIcon {
     opacity: 1;
@@ -29,13 +30,13 @@
   }
 }
 
-.TabIcon {
-  font-size: 12px;
-}
-
 .TabName {
   margin: 0 8px;
   font-size: 15px;
+}
+
+.TabIcon {
+  font-size: 12px;
 }
 
 .TabCloseIcon {
@@ -46,3 +47,9 @@
   // font-size: 12px;
 }
 
+.TabUnSaveIcon {
+  width: 9px;
+  height: 9px;
+  border-radius: 100%;
+  background-color: currentColor;
+}
