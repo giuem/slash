@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import {
   FolderFilled,
@@ -34,9 +34,13 @@ const FileTreeItem: React.FC<{ file: VFile; level: number }> = observer(
       tabs.activateTab(file);
     }, [file, tabs]);
 
-    const handleDelete = useCallback(() => {
-      fs.delete(file.path);
-    }, [fs, file]);
+    const handleDelete = useCallback(
+      (e: MouseEvent) => {
+        e.stopPropagation();
+        fs.delete(file.path);
+      },
+      [fs, file]
+    );
 
     const handleAddFile = useCallback(
       e => {
@@ -83,7 +87,7 @@ const FileTreeItem: React.FC<{ file: VFile; level: number }> = observer(
             />
           ) : (
             <>
-              <span>{file.basename}</span>
+              <span className={styles.ItemName}>{file.basename}</span>
               <span className={styles.ToolBox}>
                 {file.isDir && (
                   <>

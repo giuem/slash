@@ -5,13 +5,13 @@ import { useAddFileInPath } from "./hooks";
 import { FileTree } from "./Tree";
 
 interface SidebarProps {
-  width: number;
+  width: number | string;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ width }) => {
   const { type, addFile, addDir, addDone } = useAddFileInPath("/");
   return (
-    <aside style={{ width }}>
+    <aside className={styles.Sidebar} style={{ width }}>
       <section className={styles.Files}>
         <header>
           <span>Files</span>
