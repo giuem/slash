@@ -1,15 +1,50 @@
 import { VFile } from "./fs";
 import { editor } from "monaco-editor";
 import { observable, action } from "mobx";
-import { monaco } from "@monaco-editor/react";
 import _ from "lodash";
+import { monaco } from "./monaco";
 
-export interface TabItem {
-  id: string;
-  file: VFile;
-  model: editor.ITextModel;
-  isEdited: boolean;
-  isPined: boolean;
+// export interface TabItem {
+//   id: string;
+//   file: VFile;
+//   model: editor.ITextModel;
+//   isEdited: boolean;
+//   isPined: boolean;
+// }
+
+export class TabItem {
+  public id = _.uniqueId();
+  public readonly file: VFile;
+  public readonly model: editor.ITextModel;
+
+  // @observable
+  // public isEdited = false;
+
+  constructor(file: VFile) {
+    this.file = file;
+    const uri = monaco.Uri.from({ path: file.path, scheme: "file" });
+    this.model =
+      monaco.editor.getModel(uri) ||
+      monaco.editor.createModel(
+        file.content as string,
+        "",
+        monaco.Uri.from({ path: file.path, scheme: "file" })
+      );
+
+    this.model.onDidChangeContent(e => {
+      const content = this.model.getValue();
+      this.file.content = content;
+    });
+  }
+
+  // save() {
+  //   const content = this.model.getValue();
+  //   this.file.content = content;
+  // }
+
+  dispose() {
+    this.model.dispose();
+  }
 }
 
 class TabStore {
@@ -23,24 +58,7 @@ class TabStore {
   public async activateTab(file: VFile) {
     let tab = this.tabs.find(t => t.file === file);
     if (!tab) {
-      const m = await monaco.init().then(m => m);
-      // console.log(editor);
-      tab = observable({
-        id: _.uniqueId(),
-        file,
-        model: m.editor.createModel(
-          file.content as string,
-          "",
-          m.Uri.from({ path: file.path, scheme: "file" })
-        ),
-        isEdited: false,
-        isPined: false
-      });
-
-      tab.model.onDidChangeContent(e => {
-        tab!.isEdited = true;
-      });
-
+      tab = new TabItem(file);
       this.tabs.push(tab);
     }
 
@@ -51,7 +69,7 @@ class TabStore {
 
   @action
   public removeTab(tab: TabItem) {
-    tab.model.dispose();
+    tab.dispose();
     const idx = this.tabs.findIndex(t => t === tab);
     this.tabs = this.tabs.filter(t => t !== tab);
 

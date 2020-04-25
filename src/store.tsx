@@ -1,13 +1,22 @@
-import { useContext, createContext, useEffect } from "react";
+import { useContext, createContext, useEffect, useState } from "react";
 import { useLocalStore } from "mobx-react"; // 6.x
 import VFileSystem from "./lib/fs";
 import TabStore from "./lib/tabs";
 import { autorun } from "mobx";
+import * as Monaco from "monaco-editor";
+import { loadMonaco } from "./lib/monaco";
 
-function createStore() {
+interface Store {
+  fs: VFileSystem;
+  tabStore: TabStore;
+  monaco: typeof Monaco | null;
+}
+
+function createStore(): Store {
   return {
     fs: VFileSystem.fromJSON(localStorage.getItem("fs") || ""),
-    tabStore: new TabStore()
+    tabStore: new TabStore(),
+    monaco: null
   };
 }
 
@@ -17,6 +26,7 @@ const storeContext = createContext<TStore | null>(null);
 
 export const StoreProvider = ({ children }) => {
   const store = useLocalStore(createStore);
+  const [isLoading, setLoading] = useState(true);
   const { fs } = store;
 
   // debug only
@@ -40,8 +50,17 @@ export const StoreProvider = ({ children }) => {
     );
   }, [fs]);
 
+  useEffect(() => {
+    loadMonaco().then(m => {
+      store.monaco = m;
+      setLoading(false);
+    });
+  }, [store]);
+
   return (
-    <storeContext.Provider value={store}>{children}</storeContext.Provider>
+    <storeContext.Provider value={store}>
+      {isLoading ? null : children}
+    </storeContext.Provider>
   );
 };
 
@@ -62,4 +81,9 @@ export const useFS = () => {
 export const useTabs = () => {
   const store = useStore();
   return store.tabStore;
+};
+
+export const useMonaco = () => {
+  const store = useStore();
+  return store.monaco!;
 };

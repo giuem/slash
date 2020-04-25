@@ -24,7 +24,7 @@ const HighEditor = observer(function HighEditor() {
 
   return tabs.activeTab ? (
     <Editor
-      height="100%"
+      height="calc(100vh - 39px)"
       theme="dark"
       options={options}
       editorDidMount={handleEditorDidMount}

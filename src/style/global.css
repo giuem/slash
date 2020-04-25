@@ -8,4 +8,5 @@ body {
   color: var(--color-text);
 
   font-family: 'Source Sans Pro', monospace;
+  overflow: hidden;
 }
