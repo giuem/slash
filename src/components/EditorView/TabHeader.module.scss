@@ -1,9 +1,28 @@
 .Header {
   display: flex;
+  height: 39px;
+
+  background: var(--tab-header-background);
 }
 
 .Tabs {
   display: flex;
+  flex: 1;
+}
+
+.Toolbar {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  margin: 0 16px;
+
+  > span {
+    margin: 8px;
+    cursor: pointer;
+    &:hover {
+      color: #fff;
+    }
+  }
 }
 
 .Tab {
@@ -13,6 +32,7 @@
   cursor: pointer;
   user-select: none;
   align-items: center;
+  background: var(--tab-background);
 
   &:hover .TabCloseIcon {
     opacity: 1;
@@ -23,7 +43,7 @@
   composes: Tab;
   color: #fff;
   border-bottom: 1px solid #0ff;
-  background-color: rgba($color: #fff, $alpha: 0.08);
+  background-color: var(--tab-active-background);
 
   .TabCloseIcon {
     opacity: 1;
@@ -31,12 +51,12 @@
 }
 
 .TabName {
-  margin: 0 8px;
-  font-size: 15px;
+  margin: 0 4px;
+  font-size: 13px;
 }
 
 .TabIcon {
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .TabCloseIcon {

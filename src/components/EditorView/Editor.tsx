@@ -6,7 +6,9 @@ import { observer } from "mobx-react";
 import { useSize } from "@umijs/hooks";
 
 const options: editor.IEditorOptions = {
-  minimap: { enabled: false }
+  minimap: { enabled: false },
+  fontFamily: "'Fira Code', Courier, monospace",
+  fontSize: 14
   // automaticLayout: true
 };
 
@@ -34,13 +36,11 @@ const HighEditor = observer(function HighEditor() {
       style={{ position: "absolute", top: 39, left: 0, right: 0, bottom: 0 }}
       ref={ref}
     >
-      {tabs.activeTab ? (
-        <Editor
-          theme="dark"
-          options={options}
-          editorDidMount={handleEditorDidMount}
-        />
-      ) : null}
+      <Editor
+        theme="dark"
+        options={options}
+        editorDidMount={handleEditorDidMount}
+      />
     </div>
   );
 });

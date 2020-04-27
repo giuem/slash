@@ -1,9 +1,17 @@
 import { useTabs } from "../../store";
 import { observer } from "mobx-react";
-import { CloseOutlined, FileFilled } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  FileFilled,
+  RightSquareOutlined,
+  FullscreenExitOutlined,
+  FullscreenOutlined
+} from "@ant-design/icons";
 import styles from "./TabHeader.module.scss";
-import { useCallback, MouseEvent } from "react";
+import { useCallback, MouseEvent, useEffect } from "react";
 import { TabItem } from "../../lib/tabs";
+import { useFullscreen } from "@umijs/hooks";
+import { Tooltip } from "antd";
 
 const Tab = observer(function Tab({ tab }: { tab: TabItem }) {
   const tabs = useTabs();
@@ -43,6 +51,27 @@ const Tab = observer(function Tab({ tab }: { tab: TabItem }) {
   );
 });
 
+const Toolbar = () => {
+  const { isFullscreen, toggleFull } = useFullscreen({
+    dom: document.documentElement
+  });
+
+  return (
+    <section className={styles.Toolbar}>
+      <span onClick={toggleFull}>
+        <Tooltip title="Fullscreen">
+          {isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+        </Tooltip>
+      </span>
+      <span>
+        <Tooltip title="Preview">
+          <RightSquareOutlined />
+        </Tooltip>
+      </span>
+    </section>
+  );
+};
+
 const TabHeader = observer(function TabHeader() {
   const tabs = useTabs();
 
@@ -53,6 +82,7 @@ const TabHeader = observer(function TabHeader() {
           <Tab key={tab.id} tab={tab} />
         ))}
       </section>
+      <Toolbar />
     </header>
   );
 });

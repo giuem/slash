@@ -102,3 +102,12 @@ export const useAddFileInPath = (p: string) => {
     addDone
   };
 };
+
+export const useToggle = (defaultValue: boolean) => {
+  const [v, sv] = useState(defaultValue);
+  const tg = useCallback(() => {
+    sv(v => !v);
+  }, []);
+
+  return [v, tg];
+};

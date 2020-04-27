@@ -1,14 +1,18 @@
 :root {
-  --background: #121212;
+  --background: #181818;
+  --sidebar-background: #252526;
+  --sidebar-header-background: #1e1e1e;
+  --tab-header-background: #252526;
+  --tab-active-background: #1e1e1e;
+  --tab-background: #2d2d2d;
   --color-text: rgba(255, 255, 255, 0.87)
 }
 
 body {
-  background: var(--background);
+  background: var(--background) !important;
   color: var(--color-text);
 
-  font-family: 'Source Sans Pro', monospace;
-  /* overflow: hidden; */
+  font-family: 'Lato', sans-serif !important;
 }
 
 .Resizer {
