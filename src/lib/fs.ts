@@ -20,6 +20,9 @@ export class VFile {
   @observable
   public content: string | null;
 
+  @observable
+  public isDeleted = false;
+
   constructor({
     path,
     content,
@@ -134,7 +137,7 @@ export default class VFileSystem {
   public delete(path: string) {
     const file = this.stats(path);
     if (!file) return;
-
+    file.isDeleted = true;
     this.fm.delete(path);
     if (file.isDir) {
       this.fm.forEach(f => {

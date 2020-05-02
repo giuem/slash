@@ -1,6 +1,6 @@
 import { VFile } from "./fs";
 import { editor } from "monaco-editor";
-import { observable, action } from "mobx";
+import { observable, action, autorun } from "mobx";
 import _ from "lodash";
 import { monaco } from "./monaco";
 
@@ -22,6 +22,7 @@ export class TabItem {
 
   constructor(file: VFile) {
     this.file = file;
+
     const uri = monaco.Uri.from({ path: file.path, scheme: "file" });
     this.model =
       monaco.editor.getModel(uri) ||
@@ -60,6 +61,12 @@ class TabStore {
     if (!tab) {
       tab = new TabItem(file);
       this.tabs.push(tab);
+      autorun(r => {
+        if (file.isDeleted) {
+          this.removeTab(tab!);
+          r.dispose();
+        }
+      });
     }
 
     this.activeTab = tab;
