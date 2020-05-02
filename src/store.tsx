@@ -2,9 +2,10 @@ import { useContext, createContext, useEffect, useState } from "react";
 import { useLocalStore } from "mobx-react"; // 6.x
 import VFileSystem from "./lib/fs";
 import TabStore from "./lib/tabs";
-import { autorun } from "mobx";
+import { autorun, reaction, toJS } from "mobx";
 import * as Monaco from "monaco-editor";
 import { loadMonaco } from "./lib/monaco";
+import localforage from "localforage";
 
 interface Store {
   fs: VFileSystem;
@@ -14,7 +15,7 @@ interface Store {
 
 function createStore(): Store {
   return {
-    fs: VFileSystem.fromJSON(localStorage.getItem("fs") || ""),
+    fs: new VFileSystem(),
     tabStore: new TabStore(),
     monaco: null
   };
@@ -40,14 +41,17 @@ export const StoreProvider = ({ children }) => {
     }, [store]);
   }
 
-  // sync fs to localStorage
   useEffect(() => {
-    return autorun(
-      () => {
-        localStorage.setItem("fs", fs.toJSON());
-      },
-      { delay: 300 }
-    );
+    localforage.getItem("fs").then(o => {
+      store.fs.fromJSON(o);
+    });
+  }, [store]);
+
+  // sync fs to localforage
+  useEffect(() => {
+    return autorun(() => localforage.setItem("fs", fs.toJSON()), {
+      delay: 300
+    });
   }, [fs]);
 
   useEffect(() => {

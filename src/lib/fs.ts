@@ -1,10 +1,19 @@
 // import VFile from "./file";
-import { observable, action, computed } from "mobx";
+import { observable, action, computed, toJS } from "mobx";
 import _ from "lodash";
 import path from "path";
 
+function ID() {
+  return (
+    "file_" +
+    Math.random()
+      .toString(36)
+      .slice(2)
+  );
+}
+
 export class VFile {
-  public readonly id = _.uniqueId();
+  public readonly id = ID();
   @observable
   public path: string;
 
@@ -60,7 +69,7 @@ export default class VFileSystem {
   @observable
   private fm: Map<string, VFile> = new Map();
 
-  private constructor() {
+  constructor() {
     this.fm.set("/", new VFile({ path: "/" }));
   }
 
@@ -149,28 +158,31 @@ export default class VFileSystem {
   }
 
   toJSON() {
-    const obj = {};
+    const obj = observable({});
     this.fm.forEach((f, k) => {
       obj[k] = f;
     });
-    return JSON.stringify(obj);
+    return toJS(obj);
   }
 
-  static fromJSON(jsonStr: string) {
-    const fs = new VFileSystem();
+  fromJSON(o: any) {
     try {
-      const o = JSON.parse(jsonStr);
       if (Object.keys(o).length > 1) {
-        fs.fm.clear();
+        this.fm.clear();
         for (const k in o) {
           const { path, content, id } = o[k];
-          fs.fm.set(k, new VFile({ path, content, id }));
+          this.fm.set(k, new VFile({ path, content, id }));
         }
       }
     } catch (error) {
+      console.log(error);
       // ignore
     }
+  }
 
+  static fromJSON(o: any) {
+    const fs = new VFileSystem();
+    fs.fromJSON(o);
     return fs;
   }
 }
