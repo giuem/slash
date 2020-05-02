@@ -7,7 +7,9 @@ import {
   FolderAddOutlined,
   FileAddOutlined,
   CloseOutlined,
-  EditOutlined
+  EditOutlined,
+  FolderAddFilled,
+  FileAddFilled
 } from "@ant-design/icons";
 import _ from "lodash";
 import { Input } from "antd";
@@ -153,3 +155,21 @@ export const FileTree: React.FC<{
     </div>
   );
 });
+
+const Files = () => {
+  const { type, addFile, addDir, addDone } = useAddFileInPath("/");
+  return (
+    <section className={styles.Files}>
+      <header className={styles.SidebarHeader}>
+        <span>Files</span>
+        <span style={{ marginLeft: "auto" }}>
+          <FileAddFilled onClick={addFile} />
+          <FolderAddFilled style={{ marginLeft: 6 }} onClick={addDir} />
+        </span>
+      </header>
+      <FileTree path="/" addType={type} addDone={addDone} />
+    </section>
+  );
+};
+
+export default Files;

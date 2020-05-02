@@ -109,5 +109,5 @@ export const useToggle = (defaultValue: boolean) => {
     sv(v => !v);
   }, []);
 
-  return [v, tg];
+  return [v, tg] as [boolean, () => void];
 };

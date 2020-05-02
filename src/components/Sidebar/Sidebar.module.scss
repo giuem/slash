@@ -6,28 +6,27 @@
   user-select: none;
 }
 
+.SidebarHeader {
+  padding: 8px 20px;
+  display: flex;
+  border-bottom: 1px solid rgba($color: #fff, $alpha: 0.12);
+  background: var(--sidebar-header-background);
+  font-weight: bold;
+}
+
+.Item {
+  padding: 0 20px;
+  color: rgba(255,255,255,0.66);
+  line-height: 30px;
+
+  font-size: 13px;
+  transition: color 120ms ease;
+  display: flex;
+}
+
 .Files {
-  header {
-    padding: 8px 20px;
-    display: flex;
-    border-bottom: 1px solid rgba($color: #fff, $alpha: 0.2);
-    background: var(--sidebar-header-background);
-    font-weight: bold;
-  }
-
-  // .Tree {}
-
   .Item {
-    padding: 0 20px;
-    color: rgba(255,255,255,0.66);
-    line-height: 30px;
-
-    font-size: 13px;
-
     cursor: pointer;
-    transition: color 120ms ease;
-
-    display: flex;
 
     &:hover {
       color: rgba(255,255,255,1);
@@ -38,6 +37,36 @@
         position: static;
       }
     }
+  }
+}
+
+.Dependencies {
+  .Item {
+    justify-content: space-between;
+
+    &:hover {
+      color: rgba(255,255,255,1);
+      background-color: rgba($color: #fff, $alpha: 0.1);
+      .NpmDeleteIcon {
+        display: inline;
+      }
+    }
+
+    .ItemRight {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .NpmDeleteIcon {
+      cursor: pointer;
+
+      display: none;
+      margin-left: 4px;
+    }
+  }
+
+  .EnterPkg {
+    padding: 0 20px;
   }
 }
 
