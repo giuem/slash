@@ -1,4 +1,4 @@
-import { computed, action } from "mobx";
+import { computed, action, autorun } from "mobx";
 import { fs } from "./fs";
 import { tabStore } from "./tabs";
 
@@ -22,7 +22,29 @@ export function getPackageUrl(name: string, version: string) {
   return `https://cdn.pika.dev/${name}/${version}`;
 }
 
+const prefetches = new Set();
+function preloadModule(url) {
+  if (prefetches.has(url)) {
+    return;
+  }
+  const prefetcher = document.createElement("link");
+  prefetcher.rel = "prefetch";
+  prefetcher.href = url;
+  document.head.appendChild(prefetcher);
+
+  prefetches.add(url);
+}
+
 class PackageManager {
+  constructor() {
+    autorun(() => {
+      console.log(this.dependencies);
+      this.dependencies.map(item => {
+        preloadModule(getPackageUrl(item.name, item.version));
+      });
+    });
+  }
+
   @computed get packageJSON() {
     const pkg = fs.stats("/package.json");
     if (!pkg) {
