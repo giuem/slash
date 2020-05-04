@@ -1,6 +1,7 @@
 import { computed, action, autorun } from "mobx";
 import { fs } from "./fs";
 import { tabStore } from "./tabs";
+import emitter, { EVENT_TYPES } from "./event";
 
 const RE_PKG = /^(@[^/]+\/[^/@]+|[^/@]+)(?:@([\s\S]+))?/;
 const PACKAGE_PATH = "/package.json";
@@ -112,6 +113,7 @@ class PackageManager {
     json.dependencies[name] = meta.version;
 
     this.writePackageJSON(json);
+    emitter.emit(EVENT_TYPES.ADD_PACKAGE, { name });
   }
 
   public removePackage(name: string) {
@@ -124,6 +126,7 @@ class PackageManager {
     json.dependencies[name] = undefined;
 
     this.writePackageJSON(json);
+    emitter.emit(EVENT_TYPES.REMOVE_PACKAGE, { name });
   }
 
   public readPackage(name: string, version?: string) {
