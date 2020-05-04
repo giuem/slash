@@ -1,6 +1,5 @@
 // import VFile from "./file";
 import { observable, action, computed, toJS } from "mobx";
-import _ from "lodash";
 import path from "path";
 
 function ID() {
@@ -189,3 +188,5 @@ export default class VFileSystem {
     return fs;
   }
 }
+
+export const fs = new VFileSystem();

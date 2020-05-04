@@ -1,23 +1,26 @@
 import { useContext, createContext, useEffect, useState } from "react";
 import { useLocalStore } from "mobx-react"; // 6.x
-import VFileSystem from "./lib/fs";
-import TabStore from "./lib/tabs";
-import { autorun, reaction, toJS } from "mobx";
+import VFileSystem, { fs } from "./lib/fs";
+import TabStore, { tabStore } from "./lib/tabs";
+import { autorun } from "mobx";
 import * as Monaco from "monaco-editor";
 import { loadMonaco } from "./lib/monaco";
 import localforage from "localforage";
+import PackageManager from "./lib/packageManager";
 
 interface Store {
   fs: VFileSystem;
   tabStore: TabStore;
   monaco: typeof Monaco | null;
+  packageManager: PackageManager;
 }
 
 function createStore(): Store {
   return {
-    fs: new VFileSystem(),
-    tabStore: new TabStore(),
-    monaco: null
+    fs,
+    tabStore,
+    monaco: null,
+    packageManager: new PackageManager()
   };
 }
 
@@ -90,4 +93,9 @@ export const useTabs = () => {
 export const useMonaco = () => {
   const store = useStore();
   return store.monaco!;
+};
+
+export const usePackageManager = () => {
+  const store = useStore();
+  return store.packageManager;
 };

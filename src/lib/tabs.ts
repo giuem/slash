@@ -38,6 +38,10 @@ export class TabItem {
     });
   }
 
+  updateContent() {
+    this.model.setValue(this.file.content!);
+  }
+
   // save() {
   //   const content = this.model.getValue();
   //   this.file.content = content;
@@ -85,6 +89,12 @@ class TabStore {
         this.tabs[idx < this.tabs.length ? idx : idx - 1] ?? null;
     }
   }
+
+  public isInTabs(path: string) {
+    return this.tabs.find(tab => tab.file.path === path);
+  }
 }
 
 export default TabStore;
+
+export const tabStore = new TabStore();
