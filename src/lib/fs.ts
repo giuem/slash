@@ -111,7 +111,6 @@ export default class VFileSystem {
     return this.fm.has(path);
   }
 
-  @action
   public stats(path: string) {
     return this.fm.get(path);
   }
@@ -167,6 +166,7 @@ export default class VFileSystem {
     return toJS(obj);
   }
 
+  @action
   fromJSON(o: any) {
     try {
       if (Object.keys(o).length > 1) {

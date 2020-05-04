@@ -38,7 +38,6 @@ function preloadModule(url) {
 class PackageManager {
   constructor() {
     autorun(() => {
-      console.log(this.dependencies);
       this.dependencies.map(item => {
         preloadModule(getPackageUrl(item.name, item.version));
       });
