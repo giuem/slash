@@ -22,9 +22,19 @@ const HighEditor = observer(function HighEditor() {
   }, []);
 
   useEffect(() => {
-    if (editor && tabs.activeTab) {
-      editor.setModel(tabs.activeTab.model);
+    const at = tabs.activeTab;
+    if (editor && at) {
+      editor.setModel(at.model);
+      if (at.state) {
+        editor.restoreViewState(at.state);
+        editor.focus();
+      }
     }
+    return () => {
+      if (editor && at) {
+        at.state = editor.saveViewState();
+      }
+    };
   }, [editor, tabs.activeTab]);
 
   useEffect(() => {

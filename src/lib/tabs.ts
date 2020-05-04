@@ -16,6 +16,7 @@ export class TabItem {
   public id = _.uniqueId();
   public readonly file: VFile;
   public readonly model: editor.ITextModel;
+  public state: editor.ICodeEditorViewState | null;
 
   // @observable
   // public isEdited = false;
