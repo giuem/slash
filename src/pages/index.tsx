@@ -2,7 +2,6 @@ import Layout from "../components/Layout";
 import Sidebar from "../components/Sidebar";
 import EditorView from "../components/EditorView";
 import SplitPane from "react-split-pane";
-import { monaco } from "../lib/monaco";
 
 const App = () => {
   return (

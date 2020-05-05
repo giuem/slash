@@ -1,1 +1,3 @@
-export default class Compiler {}
+export default class Compiler {
+  compileJS(content: string) {}
+}

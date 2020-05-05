@@ -1,4 +1,4 @@
-import { useTabs } from "../../store";
+import { useTabs, useAppData } from "../../store";
 import { observer } from "mobx-react";
 import {
   CloseOutlined,
@@ -56,6 +56,7 @@ const Toolbar = () => {
     dom: document.documentElement
   });
 
+  const appData = useAppData();
   return (
     <section className={styles.Toolbar}>
       <span onClick={toggleFull}>
@@ -63,7 +64,7 @@ const Toolbar = () => {
           {isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
         </Tooltip>
       </span>
-      <span>
+      <span onClick={appData.togglePreview}>
         <Tooltip title="Preview">
           <RightSquareOutlined />
         </Tooltip>

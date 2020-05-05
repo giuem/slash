@@ -7,12 +7,14 @@ import * as Monaco from "monaco-editor";
 import { loadMonaco } from "./lib/monaco";
 import localforage from "localforage";
 import PackageManager from "./lib/packageManager";
+import AppData, { appData } from "./lib/app";
 
 interface Store {
   fs: VFileSystem;
   tabStore: TabStore;
   monaco: typeof Monaco | null;
   packageManager: PackageManager;
+  appData: AppData;
 }
 
 function createStore(): Store {
@@ -20,7 +22,8 @@ function createStore(): Store {
     fs,
     tabStore,
     monaco: null,
-    packageManager: new PackageManager()
+    packageManager: new PackageManager(),
+    appData
   };
 }
 
@@ -98,4 +101,9 @@ export const useMonaco = () => {
 export const usePackageManager = () => {
   const store = useStore();
   return store.packageManager;
+};
+
+export const useAppData = () => {
+  const store = useStore();
+  return store.appData;
 };

@@ -1,0 +1,87 @@
+.Sandbox {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.iframe {
+  flex: 1;
+  background: #fff;
+
+  iframe {
+    border: 0;
+  }
+}
+
+.Console {
+  flex-shrink: 0
+}
+
+.ConsoleBar {
+  border-top: 1px solid rgba($color: #fff, $alpha: 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ConsoleBarTitle {
+  display: inline-block;
+  padding: 5px 8px;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba($color: #fff, $alpha: 0.1);
+  }
+}
+
+.ConsoleBarTools {
+  padding: 5px 8px;
+  font-size: 12px;
+  > span {
+    cursor: pointer;
+    margin: 0 4px;
+  }
+}
+
+.ConsoleContainer {
+  height: 375px;
+  background: var(--console-background);
+  font-size: 13px;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 10px;
+    background: var(--background);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #000;
+  }
+}
+
+.ConsoleContent {
+  position: relative;
+  padding: 3px 8px 3px 28px;
+  border-top: 0.5px solid rgba($color: #fff, $alpha: 0.2);
+  border-bottom: 0.5px solid rgba($color: #fff, $alpha: 0.2);
+
+  // &:first-child {
+  //   border-top: 0;
+  // }
+
+  // &:last-child {
+  //   border-bottom: 0;
+  // }
+
+  &[data-type="error"] {
+    color: rgb(254,127,127);
+    background: var(--console-error);
+    border-color: #5B0000;
+  }
+}
+
+.ConsoleContentIcon {
+  position: absolute;
+  left: 8px;
+  color: red;
+}
