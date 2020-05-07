@@ -18,7 +18,7 @@ const EditorView = observer(() => {
       {tab.activeTab && (
         <>
           <TabHeader />
-          {appData.showPreview ? (
+          {appData.settings.showPreview ? (
             <SplitPane
               style={{ top: 39, bottom: 0, height: "auto" }}
               minSize={300}

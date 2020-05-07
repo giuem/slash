@@ -1,10 +1,30 @@
-import { observable, action } from "mobx";
+import { observable, action, autorun } from "mobx";
+import localforage from "localforage";
+interface AppSettings {
+  entry: string;
+  showPreview: boolean;
+}
 
 class AppData {
-  @observable showPreview = false;
+  @observable settings: AppSettings = {
+    entry: "index.html",
+    showPreview: false
+  };
+
+  constructor() {
+    localforage.getItem<AppSettings>("app_settings").then(s => {
+      if (s) {
+        this.settings = s;
+      }
+    });
+
+    autorun(() => {
+      localforage.setItem("app_settings", this.settings);
+    });
+  }
 
   @action togglePreview = () => {
-    this.showPreview = !this.showPreview;
+    this.settings.showPreview = !this.settings.showPreview;
   };
 }
 
