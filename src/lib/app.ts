@@ -1,4 +1,4 @@
-import { observable, action, autorun } from "mobx";
+import { observable, action, autorun, toJS } from "mobx";
 import localforage from "localforage";
 interface AppSettings {
   entry: string;
@@ -19,7 +19,7 @@ class AppData {
     });
 
     autorun(() => {
-      localforage.setItem("app_settings", this.settings);
+      localforage.setItem("app_settings", toJS(this.settings));
     });
   }
 

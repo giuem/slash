@@ -1,36 +1,16 @@
 import styles from "./Sandbox.module.scss";
-import { CONSOLE_MESSAGE } from "./constant";
 import Console from "./Console";
+import { useFS, useAppData } from "../../store";
+import { makeDoc } from "./makeDoc";
+import { observer } from "mobx-react";
+import path from "path";
 
-const intercept = `
-var origin_console_log = console.log;
-console.log = function() {
-  origin_console_log.apply(this, arguments)
-  var output = Array.from(arguments).join(" ")
-  top.postMessage({method: "${CONSOLE_MESSAGE}", type: "log", value: output}, top.location.origin)
-}
-window.addEventListener('error', event => {
-  top.postMessage({method: "${CONSOLE_MESSAGE}", type: "error", value: event.message}, top.location.origin)
-})
-`;
+const Sandbox = observer(function Sandbox() {
+  const fs = useFS();
+  const appData = useAppData();
 
-const doc = `
-<!doctype html>
-<html>
-<head>
-<script>${intercept}</script>
-</head>
-<body>
-hello world
-<script>
-for(let i =0; i < 100; i++) console.log(i)
-
-</script>
-</body>
-</html>
-`;
-
-const Sandbox = () => {
+  const entryFile = fs.stats(path.join("/", appData.settings.entry));
+  const doc = makeDoc(entryFile?.content ?? "");
   return (
     <div className={styles.Sandbox}>
       <div className={styles.iframe}>
@@ -39,6 +19,6 @@ const Sandbox = () => {
       <Console />
     </div>
   );
-};
+});
 
 export default Sandbox;
