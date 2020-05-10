@@ -5,6 +5,7 @@ import { CacheFirst, NetworkFirst } from "workbox-strategies";
 
 import localforage from "localforage";
 import { processHtml } from "./process/html";
+import { processJS } from "./process/js";
 
 setDefaultHandler(new NetworkFirst());
 
@@ -46,7 +47,7 @@ registerRoute(
     }
 
     if (request.destination === "script") {
-      return new Response(file.content, {
+      return new Response(processJS(file.content), {
         status: 200,
         headers: {
           "Content-Type": "application/javascript; charset=utf-8"

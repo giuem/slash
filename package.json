@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.8.3",
+    "@babel/standalone": "^7.9.6",
     "@giuem/eslint-config": "^1.0.3",
     "@rollup/plugin-commonjs": "^11.1.0",
     "@rollup/plugin-node-resolve": "^7.1.3",
