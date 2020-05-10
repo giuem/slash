@@ -39,10 +39,14 @@ export const makeDoc = (template?: string) => {
   const head = doc.querySelector("head");
   const body = doc.querySelector("body");
 
+  // inject
   if (head) {
     head.appendChild(injectScript);
   } else if (body) {
     body.insertBefore(injectScript, body.firstChild);
   }
+
+  // transform script and css
+
   return `<!DOCTYPE html><html>${doc.children[0].innerHTML}</html>`;
 };
