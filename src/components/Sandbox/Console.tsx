@@ -14,7 +14,6 @@ const Console = () => {
   const lastRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log(lastRef.current);
     lastRef.current?.scrollIntoView();
   }, [messages]);
 

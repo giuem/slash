@@ -27,3 +27,11 @@ export default function SlashApp({ Component, pageProps }: AppProps) {
     </StoreProviderNoSSR>
   );
 }
+
+if (typeof window !== "undefined") {
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js");
+    });
+  }
+}

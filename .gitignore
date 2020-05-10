@@ -31,3 +31,5 @@ yarn-error.log*
 
 # monaco editor
 /public/vs
+
+/public/sw.js

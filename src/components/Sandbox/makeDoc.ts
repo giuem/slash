@@ -1,4 +1,5 @@
 import { CONSOLE_MESSAGE } from "./constant";
+import path from "path";
 
 const intercept = `
 var origin_console_log = console.log;
@@ -45,6 +46,15 @@ export const makeDoc = (template?: string) => {
   } else if (body) {
     body.insertBefore(injectScript, body.firstChild);
   }
+
+  doc
+    .querySelectorAll('script[type="module"]')
+    .forEach((s: HTMLScriptElement) => {
+      const src = s.getAttribute("src");
+      if (src) s.setAttribute("src", path.join("/-", src));
+    });
+
+  console.dir();
 
   // transform script and css
 
