@@ -37,16 +37,16 @@ const Tab = observer(function Tab({ tab }: { tab: TabItem }) {
         <FileFilled />
       </span>
       <span className={styles.TabName}>{tab.file.basename}</span>
-      <span className={styles.TabCloseIcon} onClick={closeTab}>
+      {/* <span className={styles.TabCloseIcon} onClick={closeTab}>
         <CloseOutlined />
-      </span>
-      {/* {tab.isEdited ? (
+      </span> */}
+      {tab.isEdited ? (
         <span className={styles.TabUnSaveIcon} onClick={closeTab}></span>
       ) : (
         <span className={styles.TabCloseIcon} onClick={closeTab}>
           <CloseOutlined />
         </span>
-      )} */}
+      )}
     </div>
   );
 });

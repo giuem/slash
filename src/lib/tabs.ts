@@ -1,6 +1,6 @@
 import { VFile } from "./fs";
 import { editor } from "monaco-editor";
-import { observable, action, autorun } from "mobx";
+import { observable, action, autorun, computed } from "mobx";
 import _ from "lodash";
 import { monaco } from "./monaco";
 
@@ -21,6 +21,12 @@ export class TabItem {
   // @observable
   // public isEdited = false;
 
+  @computed get isEdited() {
+    return this._v > 0;
+  }
+
+  @observable private _v = 0;
+
   constructor(file: VFile) {
     this.file = file;
 
@@ -34,8 +40,14 @@ export class TabItem {
       );
 
     this.model.onDidChangeContent(e => {
-      const content = this.model.getValue();
-      this.file.content = content;
+      // this.isEdited = true;
+      if (e.isUndoing) {
+        this._v--;
+      } else {
+        this._v++;
+      }
+      // const content = this.model.getValue();
+      // this.file.content = content;
     });
   }
 
@@ -43,10 +55,11 @@ export class TabItem {
     this.model.setValue(this.file.content!);
   }
 
-  // save() {
-  //   const content = this.model.getValue();
-  //   this.file.content = content;
-  // }
+  save() {
+    const content = this.model.getValue();
+    this._v = 0;
+    this.file.content = content;
+  }
 
   dispose() {
     this.model.dispose();
@@ -59,6 +72,23 @@ class TabStore {
 
   @observable
   public activeTab: TabItem | null;
+
+  constructor() {
+    document.addEventListener(
+      "keydown",
+      e => {
+        if (
+          (window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) &&
+          e.keyCode == 83
+        ) {
+          e.preventDefault();
+          this.activeTab?.save();
+          // Process the event here (such as click on submit button)
+        }
+      },
+      false
+    );
+  }
 
   @action
   public async activateTab(file: VFile) {
@@ -81,6 +111,7 @@ class TabStore {
 
   @action
   public removeTab(tab: TabItem) {
+    tab.save();
     tab.dispose();
     const idx = this.tabs.findIndex(t => t === tab);
     this.tabs = this.tabs.filter(t => t !== tab);
