@@ -11,14 +11,13 @@ import { useState, useCallback, useRef, useEffect } from "react";
 const Console = () => {
   const { messages, clear } = useConsole();
   const [open, setOpen] = useState(false);
-  const lastRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
-  // @todo fixme
-  // useEffect(() => {
-  //   if (open) {
-  //     lastRef.current?.scrollIntoView();
-  //   }
-  // }, [messages, open]);
+  useEffect(() => {
+    if (open && listRef.current) {
+      listRef.current.scrollTop = listRef.current.scrollHeight;
+    }
+  }, [messages, open]);
 
   const toggleOpen = useCallback(() => {
     setOpen(v => !v);
@@ -44,14 +43,10 @@ const Console = () => {
         style={{
           maxHeight: open ? "initial" : 0
         }}
+        ref={listRef}
       >
         {messages.map(m => (
-          <div
-            className={styles.ConsoleContent}
-            key={m.id}
-            data-type={m.type}
-            ref={lastRef}
-          >
+          <div className={styles.ConsoleContent} key={m.id} data-type={m.type}>
             {m.type === "error" && (
               <span className={styles.ConsoleContentIcon}>
                 <CloseCircleFilled />
