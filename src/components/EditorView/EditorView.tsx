@@ -6,15 +6,15 @@ import HighEditor from "./Editor";
 import { useTabs, useAppData } from "../../store";
 import { observer } from "mobx-react";
 import SplitPane from "react-split-pane";
-// import Sandbox from "../Sandbox/Sandbox";
+import Sandbox from "../Sandbox/Sandbox";
 import { useMemo } from "react";
 
-const Sandbox = dynamic(
-  () => import("../Sandbox/Sandbox").then(c => c.default),
-  {
-    ssr: false
-  }
-);
+// const Sandbox = dynamic(
+//   () => import("../Sandbox/Sandbox").then(c => c.default),
+//   {
+//     ssr: false
+//   }
+// );
 
 // https://github.com/suren-atoyan/monaco-react
 

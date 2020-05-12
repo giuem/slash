@@ -1,6 +1,6 @@
 import styles from "./Sandbox.module.scss";
 import Console from "./Console";
-import { useFS, useAppData } from "../../store";
+import { useAppData } from "../../store";
 // import { makeDoc } from "./makeDoc";
 import { observer } from "mobx-react";
 import path from "path";
@@ -8,9 +8,11 @@ import { useEffect, useRef } from "react";
 import { autorun } from "mobx";
 
 const Sandbox = observer(function Sandbox() {
-  const fs = useFS();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const appData = useAppData();
+
+  const url = path.join("/-", appData.settings.entry);
+  // const url = "https://baidu.com";
 
   // useEffect(() => {
   //   const dispose = autorun(
@@ -35,7 +37,7 @@ const Sandbox = observer(function Sandbox() {
       <div className={styles.iframe}>
         <iframe
           ref={iframeRef}
-          src={path.join("/-", appData.settings.entry)}
+          src={url}
           // srcDoc={doc}
         ></iframe>
       </div>
