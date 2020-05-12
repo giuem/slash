@@ -3,6 +3,7 @@ import { editor } from "monaco-editor";
 import { observable, action, autorun, computed } from "mobx";
 import _ from "lodash";
 import { monaco } from "./monaco";
+import emitter, { EVENT_TYPES } from "./event";
 
 // export interface TabItem {
 //   id: string;
@@ -58,7 +59,14 @@ export class TabItem {
   save() {
     const content = this.model.getValue();
     this._v = 0;
-    this.file.content = content;
+    const updated = this.file.content !== content;
+    if (updated) {
+      emitter.emit(EVENT_TYPES.FILE_UPDATE, {
+        path: this.file.path,
+        updated
+      });
+      this.file.content = content;
+    }
   }
 
   dispose() {

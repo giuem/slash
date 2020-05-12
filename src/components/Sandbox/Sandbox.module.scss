@@ -9,8 +9,11 @@
 .iframe {
   flex: 1;
   background: #fff;
+  position: relative;
 
   iframe {
+    position: absolute;
+
     border: 0;
     width: 100%;
     height: 100%;
