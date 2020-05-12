@@ -7,8 +7,6 @@ import localforage from "localforage";
 import { processHtml } from "./process/html";
 import { processJS } from "./process/js";
 
-setDefaultHandler(new NetworkFirst());
-
 if (process.env.NODE_ENV === "production") {
   registerRoute(
     /^_next/,
@@ -16,6 +14,7 @@ if (process.env.NODE_ENV === "production") {
       cacheName: "_next"
     })
   );
+  setDefaultHandler(new NetworkFirst());
 }
 
 registerRoute(/https:\/\/cdn\.pika\.dev\/-\//, new CacheFirst());
@@ -37,7 +36,7 @@ registerRoute(
         status: 404
       });
     }
-    console.log(url, request, fs, pathname);
+    // console.log(url, request, fs, pathname);
 
     if (request.destination === "iframe") {
       return new Response(processHtml(file.content), {
