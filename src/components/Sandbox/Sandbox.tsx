@@ -12,21 +12,21 @@ const Sandbox = observer(function Sandbox() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const appData = useAppData();
 
-  useEffect(() => {
-    const dispose = autorun(
-      () => {
-        //@todo reload in need
-        fs.toJSON();
-        // iframeRef.current?.contentWindow?.postMessage(
-        //   { method: "PAGE_RELOAD" },
-        //   location.origin
-        // );
-        iframeRef.current?.contentWindow?.location.reload();
-      },
-      { delay: 3000 }
-    );
-    return dispose;
-  }, [fs]);
+  // useEffect(() => {
+  //   const dispose = autorun(
+  //     () => {
+  //       //@todo reload in need
+  //       fs.toJSON();
+  //       // iframeRef.current?.contentWindow?.postMessage(
+  //       //   { method: "PAGE_RELOAD" },
+  //       //   location.origin
+  //       // );
+  //       iframeRef.current?.contentWindow?.location.reload();
+  //     },
+  //     { delay: 3000 }
+  //   );
+  //   return dispose;
+  // }, [fs]);
 
   // const entryFile = fs.stats(path.join("/", appData.settings.entry));
   // const doc = makeDoc(entryFile?.content ?? "");

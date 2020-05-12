@@ -74,20 +74,21 @@ class TabStore {
   public activeTab: TabItem | null;
 
   constructor() {
-    document.addEventListener(
-      "keydown",
-      e => {
-        if (
-          (window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) &&
-          e.keyCode == 83
-        ) {
-          e.preventDefault();
-          this.activeTab?.save();
-          // Process the event here (such as click on submit button)
-        }
-      },
-      false
-    );
+    if (typeof window !== "undefined")
+      document.addEventListener(
+        "keydown",
+        e => {
+          if (
+            (window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) &&
+            e.keyCode == 83
+          ) {
+            e.preventDefault();
+            this.activeTab?.save();
+            // Process the event here (such as click on submit button)
+          }
+        },
+        false
+      );
   }
 
   @action
