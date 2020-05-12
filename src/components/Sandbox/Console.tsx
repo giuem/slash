@@ -13,9 +13,12 @@ const Console = () => {
   const [open, setOpen] = useState(false);
   const lastRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    lastRef.current?.scrollIntoView();
-  }, [messages]);
+  // @todo fixme
+  // useEffect(() => {
+  //   if (open) {
+  //     lastRef.current?.scrollIntoView();
+  //   }
+  // }, [messages, open]);
 
   const toggleOpen = useCallback(() => {
     setOpen(v => !v);

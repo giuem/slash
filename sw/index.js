@@ -20,8 +20,9 @@ if (process.env.NODE_ENV === "production") {
 registerRoute(/https:\/\/cdn\.pika\.dev\/-\//, new CacheFirst());
 
 registerRoute(
-  ({ url }) => {
-    if (url.pathname.indexOf("/-/") > -1) {
+  ({ url, request }) => {
+    // request.referrer
+    if (url.searchParams.has("sw") || request.referrer.indexOf("?sw") > -1) {
       return {};
     }
   },
@@ -61,5 +62,5 @@ registerRoute(
   }
 );
 
-// skipWaiting();
-// clientsClaim();
+skipWaiting();
+clientsClaim();
