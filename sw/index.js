@@ -47,7 +47,8 @@ registerRoute(
     }
 
     if (request.destination === "script") {
-      return new Response(processJS(file.content), {
+      const deps = await localforage.getItem("dependencies");
+      return new Response(processJS(file.content, deps), {
         status: 200,
         headers: {
           "Content-Type": "application/javascript; charset=utf-8"

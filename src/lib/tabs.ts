@@ -54,6 +54,7 @@ export class TabItem {
 
   updateContent() {
     this.model.setValue(this.file.content!);
+    this._v -= 1;
   }
 
   save() {
