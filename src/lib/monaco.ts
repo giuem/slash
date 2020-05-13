@@ -2,6 +2,8 @@ import { monaco as m } from "@monaco-editor/react";
 import * as Monaco from "monaco-editor";
 import { emmetHTML, emmetCSS } from "emmet-monaco-es";
 import emitter, { EVENT_TYPES } from "./event";
+import localForage from "localforage";
+import path from "path";
 
 export let monaco: typeof Monaco;
 
@@ -13,6 +15,59 @@ function listenPackageChange() {
   //   const libs = monaco.languages.typescript.typescriptDefaults.getExtraLibs();
   //   console.log(libs);
   // });
+}
+
+function autoCompeteImport() {
+  return monaco.languages.registerCompletionItemProvider("javascript", {
+    triggerCharacters: ["'", '"', ".", "/"],
+    provideCompletionItems: async (model, position) => {
+      const textUntilPosition = model.getValueInRange({
+        startLineNumber: 1,
+        startColumn: 1,
+        endLineNumber: position.lineNumber,
+        endColumn: position.column
+      });
+      const word = model.getWordUntilPosition(position);
+      const range = {
+        startLineNumber: position.lineNumber,
+        endLineNumber: position.lineNumber,
+        startColumn: word.startColumn,
+        endColumn: word.endColumn
+      };
+
+      const suggestions: Monaco.languages.CompletionItem[] = [];
+
+      if (
+        /(([\s|\n]+from\s+)|(\bimport\s+))["|'][^'^"]*$/.test(textUntilPosition)
+      ) {
+        if (
+          textUntilPosition.endsWith(".") ||
+          textUntilPosition.endsWith("/")
+        ) {
+          // @todo
+          // const currentPath = model.uri.path;
+          // const dir = path.dirname(currentPath);
+          // console.log(currentPath);
+        } else {
+          const deps: any = await localForage.getItem("dependencies");
+          if (deps)
+            suggestions.push(
+              ...Object.keys(deps).map(name => ({
+                label: name,
+                kind: monaco.languages.CompletionItemKind.Module,
+                detail: name,
+                insertText: name,
+                range: range
+              }))
+            );
+        }
+      }
+      console.log(suggestions);
+      return {
+        suggestions
+      };
+    }
+  });
 }
 
 function onload() {
@@ -28,6 +83,7 @@ function onload() {
   });
 
   listenPackageChange();
+  autoCompeteImport();
 
   const compilerDefaults = {
     jsxFactory: "React.createElement",
