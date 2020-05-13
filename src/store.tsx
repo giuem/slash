@@ -55,9 +55,7 @@ export const StoreProvider = ({ children }) => {
 
   // sync fs to localforage
   useEffect(() => {
-    return autorun(() => localforage.setItem("fs", fs.toJSON()), {
-      delay: 300
-    });
+    return autorun(() => localforage.setItem("fs", fs.toJSON()));
   }, [fs]);
 
   useEffect(() => {

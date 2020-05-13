@@ -60,14 +60,7 @@ export class TabItem {
   save() {
     const content = this.model.getValue();
     this._v = 0;
-    const updated = this.file.content !== content;
-    if (updated) {
-      emitter.emit(EVENT_TYPES.FILE_UPDATE, {
-        path: this.file.path,
-        updated
-      });
-      this.file.content = content;
-    }
+    this.file.content = content;
   }
 
   dispose() {

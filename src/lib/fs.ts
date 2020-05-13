@@ -1,6 +1,15 @@
 // import VFile from "./file";
-import { observable, action, computed, toJS } from "mobx";
+import {
+  observable,
+  action,
+  computed,
+  toJS,
+  when,
+  reaction,
+  autorun
+} from "mobx";
 import path from "path";
+import emitter, { EVENT_TYPES } from "./event";
 
 function ID() {
   return (
@@ -37,6 +46,21 @@ export class VFile {
     if (id != null) this.id = id;
     this.path = path;
     this.content = content ?? null;
+
+    const disposer = reaction(
+      () => this.content,
+      () => {
+        emitter.emit(EVENT_TYPES.FILE_UPDATE, {
+          path: this.path
+        });
+      }
+    );
+
+    autorun(() => {
+      if (this.isDeleted) {
+        disposer();
+      }
+    });
   }
 
   @computed
