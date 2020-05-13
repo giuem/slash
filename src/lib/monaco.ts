@@ -4,7 +4,8 @@ import { emmetHTML, emmetCSS } from "emmet-monaco-es";
 import emitter, { EVENT_TYPES } from "./event";
 import localForage from "localforage";
 import path from "path";
-import { VFile } from "./fs";
+import { VFile, fs } from "./fs";
+import { autorun } from "mobx";
 
 export let monaco: typeof Monaco;
 
@@ -84,11 +85,21 @@ function autoCompeteImport() {
             );
         }
       }
-      console.log(suggestions);
       return {
         suggestions
       };
     }
+  });
+}
+
+function autoloadModels() {
+  autorun(() => {
+    Object.values(fs.toJSON()).map(file => {
+      const uri = monaco.Uri.from({ path: file.path, scheme: "file" });
+      if (!monaco.editor.getModel(uri)) {
+        monaco.editor.createModel(file.content as string, "", uri);
+      }
+    });
   });
 }
 
@@ -106,6 +117,7 @@ function onload() {
 
   listenPackageChange();
   autoCompeteImport();
+  autoloadModels();
 
   const compilerDefaults = {
     jsxFactory: "React.createElement",
@@ -132,14 +144,14 @@ function onload() {
   monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
   monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
 
-  monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-    noSemanticValidation: true,
-    noSyntaxValidation: false
-  });
-  monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-    noSemanticValidation: true,
-    noSyntaxValidation: false
-  });
+  // monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+  //   noSemanticValidation: true,
+  //   noSyntaxValidation: false
+  // });
+  // monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+  //   noSemanticValidation: true,
+  //   noSyntaxValidation: false
+  // });
 
   emmetHTML(monaco);
   emmetCSS(monaco);

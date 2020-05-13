@@ -107,6 +107,7 @@ class TabStore {
       autorun(r => {
         if (file.isDeleted) {
           this.removeTab(tab!);
+          tab?.model.dispose();
           r.dispose();
         }
       });
@@ -121,7 +122,6 @@ class TabStore {
   public removeTab(tab: TabItem) {
     tab.save();
     tab.dispose();
-    tab.model.dispose();
     const idx = this.tabs.findIndex(t => t === tab);
     this.tabs = this.tabs.filter(t => t !== tab);
 
