@@ -28,6 +28,8 @@ export class TabItem {
 
   @observable private _v = 0;
 
+  @observable disposes: any[] = [];
+
   constructor(file: VFile) {
     this.file = file;
 
@@ -40,37 +42,34 @@ export class TabItem {
         monaco.Uri.from({ path: file.path, scheme: "file" })
       );
 
-    this.model.onDidChangeContent(e => {
-      // this.isEdited = true;
-      if (e.isUndoing) {
-        this._v--;
-      } else {
-        this._v++;
-      }
-      // const content = this.model.getValue();
-      // this.file.content = content;
-    });
+    this.disposes.push(
+      this.model.onDidChangeContent(e => {
+        // this.isEdited = true;
+        if (e.isUndoing) {
+          this._v--;
+        } else {
+          this._v++;
+        }
+        // const content = this.model.getValue();
+        // this.file.content = content;
+      })
+    );
   }
 
   updateContent() {
     this.model.setValue(this.file.content!);
+    this._v -= 1;
   }
 
   save() {
     const content = this.model.getValue();
     this._v = 0;
-    const updated = this.file.content !== content;
-    if (updated) {
-      emitter.emit(EVENT_TYPES.FILE_UPDATE, {
-        path: this.file.path,
-        updated
-      });
-      this.file.content = content;
-    }
+    this.file.content = content;
   }
 
   dispose() {
-    this.model.dispose();
+    this.disposes.forEach(f => f?.dispose());
+    // this.model.dispose();
   }
 }
 
@@ -108,6 +107,7 @@ class TabStore {
       autorun(r => {
         if (file.isDeleted) {
           this.removeTab(tab!);
+          tab?.model.dispose();
           r.dispose();
         }
       });

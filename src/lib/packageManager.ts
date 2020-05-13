@@ -2,6 +2,7 @@ import { computed, action, autorun } from "mobx";
 import { fs } from "./fs";
 import { tabStore } from "./tabs";
 import emitter, { EVENT_TYPES } from "./event";
+import localForage from "localforage";
 
 const RE_PKG = /^(@[^/]+\/[^/@]+|[^/@]+)(?:@([\s\S]+))?/;
 const PACKAGE_PATH = "/package.json";
@@ -43,6 +44,14 @@ class PackageManager {
         preloadModule(getPackageUrl(item.name, item.version));
       });
     });
+
+    autorun(() => {
+      const importsMap = this.dependencies.reduce((map, item) => {
+        map[item.name] = getPackageUrl(item.name, item.version);
+        return map;
+      }, {});
+      localForage.setItem("dependencies", importsMap);
+    });
   }
 
   @computed get packageJSON() {
@@ -81,7 +90,7 @@ class PackageManager {
       name: projName,
       version: "1.0.0",
       private: true,
-      dependencies: []
+      dependencies: {}
     };
 
     fs.writeFile(PACKAGE_PATH, JSON.stringify(json, null, 4));

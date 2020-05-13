@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import path from "path";
 import { useEffect, useRef } from "react";
 import { autorun } from "mobx";
+import emitter, { EVENT_TYPES } from "../../lib/event";
 
 const Sandbox = observer(function Sandbox() {
   const fs = useFS();
@@ -13,23 +14,24 @@ const Sandbox = observer(function Sandbox() {
   const appData = useAppData();
 
   const url = path.join("/", appData.settings.entry) + "?sw";
-  // const url = "https://baidu.com";
 
-  // useEffect(() => {
-  //   const dispose = autorun(
-  //     () => {
-  //       //@todo reload in need
-  //       fs.toJSON();
-  //       // iframeRef.current?.contentWindow?.postMessage(
-  //       //   { method: "PAGE_RELOAD" },
-  //       //   location.origin
-  //       // );
-  //       iframeRef.current?.contentWindow?.location.reload();
-  //     },
-  //     { delay: 3000 }
-  //   );
-  //   return dispose;
-  // }, [fs]);
+  useEffect(() => {
+    function triggerReload(e) {
+      const { path } = e;
+      // setTimeout(() => {
+      //   iframeRef.current?.contentWindow?.location.reload();
+      // }, 0);
+      iframeRef.current?.contentWindow?.postMessage(
+        { method: "PAGE_RELOAD", path },
+        location.origin
+      );
+    }
+
+    emitter.on(EVENT_TYPES.FILE_UPDATE, triggerReload);
+    return () => {
+      emitter.off(EVENT_TYPES.FILE_UPDATE, triggerReload);
+    };
+  }, []);
 
   // const entryFile = fs.stats(path.join("/", appData.settings.entry));
   // const doc = makeDoc(entryFile?.content ?? "");

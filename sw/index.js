@@ -6,6 +6,7 @@ import { CacheFirst, NetworkFirst } from "workbox-strategies";
 import localforage from "localforage";
 import { processHtml } from "./process/html";
 import { processJS } from "./process/js";
+import { processCSS } from "./process/css";
 
 if (process.env.NODE_ENV === "production") {
   registerRoute(
@@ -47,10 +48,28 @@ registerRoute(
     }
 
     if (request.destination === "script") {
-      return new Response(processJS(file.content), {
+      let content = "";
+      if (pathname.endsWith(".css")) {
+        content = processCSS(file.content, pathname, true);
+      } else if (pathname.endsWith(".js") || pathname.endsWith(".jsx")) {
+        const deps = await localforage.getItem("dependencies");
+        content = processJS(file.content, deps);
+      }
+
+      return new Response(content, {
         status: 200,
         headers: {
           "Content-Type": "application/javascript; charset=utf-8"
+        }
+      });
+    }
+
+    if (request.destination === "style") {
+      const content = processCSS(file.content, pathname, false);
+      return new Response(content, {
+        status: 200,
+        headers: {
+          "Content-Type": "text/css; charset=utf-8"
         }
       });
     }

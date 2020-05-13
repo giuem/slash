@@ -11,6 +11,7 @@ window.addEventListener('error', function (event) {
 window.addEventListener('message', function(e) {
   const data = e.data;
   if (data.method === 'PAGE_RELOAD') {
+    const { path } = data
     window.location.reload(true)
   }
 })

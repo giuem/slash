@@ -2,6 +2,10 @@ import { monaco as m } from "@monaco-editor/react";
 import * as Monaco from "monaco-editor";
 import { emmetHTML, emmetCSS } from "emmet-monaco-es";
 import emitter, { EVENT_TYPES } from "./event";
+import localForage from "localforage";
+import path from "path";
+import { VFile, fs } from "./fs";
+import { autorun } from "mobx";
 
 export let monaco: typeof Monaco;
 
@@ -13,6 +17,90 @@ function listenPackageChange() {
   //   const libs = monaco.languages.typescript.typescriptDefaults.getExtraLibs();
   //   console.log(libs);
   // });
+}
+
+function autoCompeteImport() {
+  return monaco.languages.registerCompletionItemProvider("javascript", {
+    triggerCharacters: ["'", '"', "/"],
+    provideCompletionItems: async (model, position) => {
+      const textUntilPosition = model.getValueInRange({
+        startLineNumber: 1,
+        startColumn: 1,
+        endLineNumber: position.lineNumber,
+        endColumn: position.column
+      });
+      const word = model.getWordUntilPosition(position);
+      const range = {
+        startLineNumber: position.lineNumber,
+        endLineNumber: position.lineNumber,
+        startColumn: word.startColumn,
+        endColumn: word.endColumn
+      };
+
+      const suggestions: Monaco.languages.CompletionItem[] = [];
+
+      if (
+        /(([\s|\n]+from\s+)|(\bimport\s+))["|'][^'^"]*$/.test(textUntilPosition)
+      ) {
+        if (textUntilPosition.endsWith("/")) {
+          const currentPath = model.uri.path;
+          const dir = path.dirname(currentPath);
+          const prefix = /(?:'|")(\S+)$/.exec(textUntilPosition)?.[1] ?? "";
+
+          const foundPath = path.resolve(dir, prefix);
+
+          const fs: { [key: string]: VFile } = await localForage.getItem("fs");
+          if (fs) {
+            const sgs: Monaco.languages.CompletionItem[] = Object.values(fs)
+              .filter(f => f.path !== currentPath)
+              .reduce<Monaco.languages.CompletionItem[]>((c, f) => {
+                const d = path.dirname(f.path);
+                const b = path.basename(f.path);
+                if (d === foundPath && b) {
+                  return c.concat({
+                    label: b,
+                    kind:
+                      f.content == null
+                        ? monaco.languages.CompletionItemKind.Folder
+                        : monaco.languages.CompletionItemKind.File,
+                    insertText: b,
+                    range: range
+                  });
+                }
+                return c;
+              }, []);
+            suggestions.push(...sgs);
+          }
+        } else {
+          const deps: any = await localForage.getItem("dependencies");
+          if (deps)
+            suggestions.push(
+              ...Object.keys(deps).map(name => ({
+                label: name,
+                kind: monaco.languages.CompletionItemKind.Module,
+                detail: name,
+                insertText: name,
+                range: range
+              }))
+            );
+        }
+      }
+      return {
+        suggestions
+      };
+    }
+  });
+}
+
+function autoloadModels() {
+  autorun(() => {
+    Object.values(fs.toJSON()).map(file => {
+      const uri = monaco.Uri.from({ path: file.path, scheme: "file" });
+      if (!monaco.editor.getModel(uri)) {
+        monaco.editor.createModel(file.content as string, "", uri);
+      }
+    });
+  });
 }
 
 function onload() {
@@ -28,6 +116,8 @@ function onload() {
   });
 
   listenPackageChange();
+  autoCompeteImport();
+  autoloadModels();
 
   const compilerDefaults = {
     jsxFactory: "React.createElement",
@@ -54,14 +144,14 @@ function onload() {
   monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
   monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
 
-  monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-    noSemanticValidation: true,
-    noSyntaxValidation: false
-  });
-  monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-    noSemanticValidation: true,
-    noSyntaxValidation: false
-  });
+  // monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+  //   noSemanticValidation: true,
+  //   noSyntaxValidation: false
+  // });
+  // monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+  //   noSemanticValidation: true,
+  //   noSyntaxValidation: false
+  // });
 
   emmetHTML(monaco);
   emmetCSS(monaco);
