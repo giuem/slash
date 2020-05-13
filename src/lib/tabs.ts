@@ -28,6 +28,8 @@ export class TabItem {
 
   @observable private _v = 0;
 
+  @observable disposes: any[] = [];
+
   constructor(file: VFile) {
     this.file = file;
 
@@ -40,16 +42,18 @@ export class TabItem {
         monaco.Uri.from({ path: file.path, scheme: "file" })
       );
 
-    this.model.onDidChangeContent(e => {
-      // this.isEdited = true;
-      if (e.isUndoing) {
-        this._v--;
-      } else {
-        this._v++;
-      }
-      // const content = this.model.getValue();
-      // this.file.content = content;
-    });
+    this.disposes.push(
+      this.model.onDidChangeContent(e => {
+        // this.isEdited = true;
+        if (e.isUndoing) {
+          this._v--;
+        } else {
+          this._v++;
+        }
+        // const content = this.model.getValue();
+        // this.file.content = content;
+      })
+    );
   }
 
   updateContent() {
@@ -64,7 +68,8 @@ export class TabItem {
   }
 
   dispose() {
-    this.model.dispose();
+    this.disposes.forEach(f => f?.dispose());
+    // this.model.dispose();
   }
 }
 
@@ -116,6 +121,7 @@ class TabStore {
   public removeTab(tab: TabItem) {
     tab.save();
     tab.dispose();
+    tab.model.dispose();
     const idx = this.tabs.findIndex(t => t === tab);
     this.tabs = this.tabs.filter(t => t !== tab);
 

@@ -1,13 +1,5 @@
 // import VFile from "./file";
-import {
-  observable,
-  action,
-  computed,
-  toJS,
-  when,
-  reaction,
-  autorun
-} from "mobx";
+import { observable, action, computed, toJS, reaction, autorun } from "mobx";
 import path from "path";
 import emitter, { EVENT_TYPES } from "./event";
 

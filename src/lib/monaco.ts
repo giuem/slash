@@ -4,6 +4,7 @@ import { emmetHTML, emmetCSS } from "emmet-monaco-es";
 import emitter, { EVENT_TYPES } from "./event";
 import localForage from "localforage";
 import path from "path";
+import { VFile } from "./fs";
 
 export let monaco: typeof Monaco;
 
@@ -19,7 +20,7 @@ function listenPackageChange() {
 
 function autoCompeteImport() {
   return monaco.languages.registerCompletionItemProvider("javascript", {
-    triggerCharacters: ["'", '"', ".", "/"],
+    triggerCharacters: ["'", '"', "/"],
     provideCompletionItems: async (model, position) => {
       const textUntilPosition = model.getValueInRange({
         startLineNumber: 1,
@@ -40,14 +41,35 @@ function autoCompeteImport() {
       if (
         /(([\s|\n]+from\s+)|(\bimport\s+))["|'][^'^"]*$/.test(textUntilPosition)
       ) {
-        if (
-          textUntilPosition.endsWith(".") ||
-          textUntilPosition.endsWith("/")
-        ) {
-          // @todo
-          // const currentPath = model.uri.path;
-          // const dir = path.dirname(currentPath);
-          // console.log(currentPath);
+        if (textUntilPosition.endsWith("/")) {
+          const currentPath = model.uri.path;
+          const dir = path.dirname(currentPath);
+          const prefix = /(?:'|")(\S+)$/.exec(textUntilPosition)?.[1] ?? "";
+
+          const foundPath = path.resolve(dir, prefix);
+
+          const fs: { [key: string]: VFile } = await localForage.getItem("fs");
+          if (fs) {
+            const sgs: Monaco.languages.CompletionItem[] = Object.values(fs)
+              .filter(f => f.path !== currentPath)
+              .reduce<Monaco.languages.CompletionItem[]>((c, f) => {
+                const d = path.dirname(f.path);
+                const b = path.basename(f.path);
+                if (d === foundPath && b) {
+                  return c.concat({
+                    label: b,
+                    kind:
+                      f.content == null
+                        ? monaco.languages.CompletionItemKind.Folder
+                        : monaco.languages.CompletionItemKind.File,
+                    insertText: b,
+                    range: range
+                  });
+                }
+                return c;
+              }, []);
+            suggestions.push(...sgs);
+          }
         } else {
           const deps: any = await localForage.getItem("dependencies");
           if (deps)
