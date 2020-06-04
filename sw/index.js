@@ -7,6 +7,7 @@ import localforage from "localforage";
 import { processHtml } from "./process/html";
 import { processJS } from "./process/js";
 import { processCSS } from "./process/css";
+import { processJSON } from "./process/json";
 
 if (process.env.NODE_ENV === "production") {
   registerRoute(
@@ -51,6 +52,8 @@ registerRoute(
       let content = "";
       if (pathname.endsWith(".css")) {
         content = processCSS(file.content, pathname, true);
+      } else if (pathname.endsWith(".json")) {
+        content = processJSON(file.content, true);
       } else if (pathname.endsWith(".js") || pathname.endsWith(".jsx")) {
         const deps = await localforage.getItem("dependencies");
         content = processJS(file.content, deps);
