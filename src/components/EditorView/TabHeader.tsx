@@ -70,7 +70,7 @@ const Toolbar = () => {
     files.map(file => {
       const path = file.path.slice(1);
       const content = file.content;
-      if (path && content != null) {
+      if (path) {
         if (content != null) {
           zip.file(path, file.content);
         } else if (content === null) {
