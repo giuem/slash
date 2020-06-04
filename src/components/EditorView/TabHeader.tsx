@@ -1,17 +1,20 @@
-import { useTabs, useAppData } from "../../store";
+import { useTabs, useAppData, useFS } from "../../store";
 import { observer } from "mobx-react";
 import {
   CloseOutlined,
   FileFilled,
   RightSquareOutlined,
   FullscreenExitOutlined,
-  FullscreenOutlined
+  FullscreenOutlined,
+  CloudDownloadOutlined
 } from "@ant-design/icons";
 import styles from "./TabHeader.module.scss";
 import { useCallback, MouseEvent, useEffect } from "react";
 import { TabItem } from "../../lib/tabs";
 import { useFullscreen } from "@umijs/hooks";
-import { Tooltip } from "antd";
+import { Tooltip, message } from "antd";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 const Tab = observer(function Tab({ tab }: { tab: TabItem }) {
   const tabs = useTabs();
@@ -56,9 +59,41 @@ const Toolbar = () => {
     dom: document.documentElement
   });
 
+  const fs = useFS();
+
   const appData = useAppData();
+
+  const onDownload = useCallback(() => {
+    const hide = message.loading("Generating Zip", 0);
+    const zip = new JSZip();
+    const files = Object.values(fs.toJSON());
+    files.map(file => {
+      const path = file.path.slice(1);
+      const content = file.content;
+      if (path && content != null) {
+        if (content != null) {
+          zip.file(path, file.content);
+        } else if (content === null) {
+          zip.folder(path);
+        }
+      }
+    });
+    zip
+      .generateAsync({ type: "blob" })
+      .then(function(content) {
+        saveAs(content, "code.zip");
+      })
+      .finally(() => {
+        hide();
+      });
+  }, []);
   return (
     <section className={styles.Toolbar}>
+      <span onClick={onDownload}>
+        <Tooltip title="Download">
+          <CloudDownloadOutlined />
+        </Tooltip>
+      </span>
       <span onClick={toggleFull}>
         <Tooltip title="Fullscreen">
           {isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
