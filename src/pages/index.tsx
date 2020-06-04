@@ -33,8 +33,8 @@ const App = () => {
 
         if (fs.exists(path)) {
           Modal.confirm({
-            title: "Do you want to overwrite file?",
-            content: `${path} already exists`,
+            title: `The path: ${path} already exists!`,
+            content: "Do you want to overwrite file?",
             onOk() {
               writeFile();
             }
