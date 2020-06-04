@@ -3019,7 +3019,7 @@ file-entry-cache@^5.0.1:
 
 file-saver@^2.0.2:
   version "2.0.2"
-  resolved "http://bnpm.byted.org/file-saver/download/file-saver-2.0.2.tgz#06d6e728a9ea2df2cce2f8d9e84dfcdc338ec17a"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.2.tgz#06d6e728a9ea2df2cce2f8d9e84dfcdc338ec17a"
   integrity sha1-BtbnKKnqLfLM4vjZ6E383DOOwXo=
 
 file-uri-to-path@1.0.0:
@@ -3775,7 +3775,7 @@ jsx-ast-utils@^2.2.3:
 
 jszip@^3.4.0:
   version "3.4.0"
-  resolved "http://bnpm.byted.org/jszip/download/jszip-3.4.0.tgz#1a69421fa5f0bb9bc222a46bca88182fba075350"
+  resolved "https://registry.yarnpkg.com/jszip/-/jszip-3.4.0.tgz#1a69421fa5f0bb9bc222a46bca88182fba075350"
   integrity sha1-GmlCH6Xwu5vCIqRryogYL7oHU1A=
   dependencies:
     lie "~3.3.0"
@@ -3824,7 +3824,7 @@ lie@3.1.1:
 
 lie@~3.3.0:
   version "3.3.0"
-  resolved "http://bnpm.byted.org/lie/download/lie-3.3.0.tgz#dcf82dee545f46074daf200c7c1c5a08e0f40f6a"
+  resolved "https://registry.yarnpkg.com/lie/-/lie-3.3.0.tgz#dcf82dee545f46074daf200c7c1c5a08e0f40f6a"
   integrity sha1-3Pgt7lRfRgdNryAMfBxaCOD0D2o=
   dependencies:
     immediate "~3.0.5"
@@ -5682,7 +5682,7 @@ serialize-javascript@^2.1.2:
 
 set-immediate-shim@~1.0.1:
   version "1.0.1"
-  resolved "http://bnpm.byted.org/set-immediate-shim/download/set-immediate-shim-1.0.1.tgz#4b2b1b27eb808a9f8dcc481a58e5e56f599f3f61"
+  resolved "https://registry.yarnpkg.com/set-immediate-shim/-/set-immediate-shim-1.0.1.tgz#4b2b1b27eb808a9f8dcc481a58e5e56f599f3f61"
   integrity sha1-SysbJ+uAip+NzEgaWOXlb1mfP2E=
 
 set-value@^2.0.0, set-value@^2.0.1:
