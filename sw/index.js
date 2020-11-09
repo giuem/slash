@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === "production") {
   setDefaultHandler(new NetworkFirst());
 }
 
-registerRoute(/https:\/\/cdn\.pika\.dev\/-\//, new CacheFirst());
+registerRoute(/https:\/\/cdn\.skypack\.dev\/-\//, new CacheFirst());
 
 registerRoute(
   ({ url, request }) => {
