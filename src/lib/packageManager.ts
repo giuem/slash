@@ -21,7 +21,7 @@ export function parsePackageInput(input: string) {
 }
 
 export function getPackageUrl(name: string, version: string) {
-  return `https://cdn.skypack.dev/${name}/${version}`;
+  return `https://cdn.skypack.dev/${name}@${version}`;
 }
 
 const prefetches = new Set();
